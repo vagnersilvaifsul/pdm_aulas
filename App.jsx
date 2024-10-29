@@ -9,22 +9,8 @@
   Como useState é um export nomeado, precisamos das chaves.
 */
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-
-// Criando meus próprios componentes
-function MeuBotao(props) {
-  //as props são os atributos passados para o componente
-  //as props só transitam de pai para filho (de cima para baixo no VDOM)
-  console.log(props.cor);
-
-  return (
-    <TouchableHighlight
-      onPress={props.aoClicar}
-      style={{...styles.botao, backgroundColor: props.cor}}>
-      <Text>Incrementar</Text>
-    </TouchableHighlight>
-  );
-}
+import {StyleSheet, Text, View} from 'react-native';
+import MeuBotao from './src/componentes/MeuBotao';
 
 // Componente principal (O App é quem inicializa o aplicativo)
 export default function App() {
@@ -47,7 +33,8 @@ export default function App() {
     <View style={styles.container}>
       <Text style={styles.texto}>Contador: {cont}</Text>
       {/* As props são livres, e podemos utilizar qualquer nome para elas. */}
-      <MeuBotao cor="blue" aoClicar={() => setCont(cont + 1)} />
+      <MeuBotao cor="green" aoClicar={() => setCont(cont + 1)} />
+      <MeuBotao cor="red" aoClicar={() => setCont(cont - 1)} />
     </View>
   );
 }
@@ -62,12 +49,5 @@ const styles = StyleSheet.create({
   texto: {
     color: 'red',
     fontSize: 20,
-  },
-  botao: {
-    width: 200,
-    height: 50,
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
   },
 });
