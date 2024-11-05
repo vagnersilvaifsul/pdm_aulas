@@ -7,11 +7,6 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import android.os.Bundle
 
 class MainActivity : ReactActivity() {
-  //Configuração da Navigation
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(null)
-  }
-
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
    * rendering of the component.
@@ -24,4 +19,11 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+
+  /*
+    Adicionado ao configurar React Natigation.
+  */
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(null)
+  }    
 }
