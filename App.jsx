@@ -8,7 +8,7 @@
   Como o React é um export default, não precisamos das chaves.
   Como useState é um export nomeado, precisamos das chaves.
 */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import MeuBotao from './src/componentes/MeuBotao';
 
@@ -23,6 +23,21 @@ export default function App() {
     Então, para evitar muitas renderizações, é necessário tomar cuidado com o uso de states.
   */
   const [cont, setCont] = useState(0);
+
+  useEffect(() => {
+    console.log('Componente foi montado');
+    return () => {
+      console.log('Componente foi desmontado');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('Contador foi alterado');
+  }, [cont]);
+
+  useEffect(() => {
+    console.log('Componente foi montado ou contador foi alterado');
+  });
 
   //com o console.log podemos acompanhar o valor da state do console de debug
   console.log(cont);

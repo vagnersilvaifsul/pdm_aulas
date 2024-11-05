@@ -5,7 +5,7 @@ import {StyleSheet, Text, TouchableHighlight} from 'react-native';
 export default function MeuBotao(props) {
   //as props são os atributos passados para o componente
   //as props só transitam de pai para filho (de cima para baixo no VDOM)
-  console.log(props.cor);
+  //console.log(props.cor);
 
   return (
     <TouchableHighlight
