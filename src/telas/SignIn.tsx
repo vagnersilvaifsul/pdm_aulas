@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   textinput: {
     width: 350,
     height: 50,
-    marginBottom: 20,
+    marginTop: 20,
     backgroundColor: 'transparent',
   },
   textEsqueceuSenha: {
