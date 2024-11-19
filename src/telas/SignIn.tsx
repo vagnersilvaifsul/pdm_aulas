@@ -1,25 +1,70 @@
-import React, {useContext, useEffect, useState} from 'react';
+import {yupResolver} from '@hookform/resolvers/yup';
+import React, {useContext, useEffect} from 'react';
+import {Controller, useForm} from 'react-hook-form';
 import {Alert, Image, ScrollView, StyleSheet, View} from 'react-native';
 import {Button, Text, TextInput, useTheme} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import * as yup from 'yup';
 import {AuthContext} from '../context/AuthProvider';
 import {Credencial} from '../model/types';
 
+const requiredMessage = 'Campo obrigatório';
+
+/*
+  /^
+  (?=.*\d)              // deve conter ao menos um dígito
+  (?=.*[a-z])           // deve conter ao menos uma letra minúscula
+  (?=.*[A-Z])           // deve conter ao menos uma letra maiúscula
+  (?=.*[$*&@#])         // deve conter ao menos um caractere especial
+  [0-9a-zA-Z$*&@#]{8,}  // deve conter ao menos 8 dos caracteres mencionados
+$/
+*/
+const schema = yup
+  .object()
+  .shape({
+    email: yup
+      .string()
+      .required(requiredMessage)
+      .matches(/\S+@\S+\.\S+/, 'Email inválido'),
+    senha: yup
+      .string()
+      .required(requiredMessage)
+      .matches(
+        /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/,
+        'A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um númeral, um caractere especial e um total de 8 caracteres',
+      ),
+  })
+  .required();
+
 export default function SignIn({navigation}: any) {
   const theme = useTheme();
-  const [credencial, setCredencial] = useState<Credencial>({
-    email: '',
-    senha: '',
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: {errors},
+  } = useForm<any>({
+    defaultValues: {
+      email: '',
+      senha: '',
+    },
+    mode: 'onSubmit',
+    resolver: yupResolver(schema),
   });
   const {signIn} = useContext<any>(AuthContext);
 
   useEffect(() => {
-    console.log('Credencial', credencial);
+    console.log('renderizou');
   });
 
-  async function entrar() {
-    console.log('Entrar', credencial);
-    const mensagem = await signIn(credencial);
+  useEffect(() => {
+    register('email');
+    register('senha');
+  }, [register]);
+
+  async function entrar(data: Credencial) {
+    console.log(JSON.stringify(data));
+    const mensagem = await signIn(data);
     if (mensagem === 'ok') {
       navigation.navigate('Home');
     } else {
@@ -36,29 +81,58 @@ export default function SignIn({navigation}: any) {
       <ScrollView>
         <>
           <Image style={styles.image} source={require('../assets/logo512.png')} />
-          <TextInput
-            style={styles.textinput}
-            value={credencial.email}
-            onChangeText={t => setCredencial({...credencial, email: t})}
-            autoCapitalize="none"
-            mode="outlined"
-            label="Email"
-            placeholder="Digite seu email"
-            right={<TextInput.Icon icon="email" />}
+          <Controller
+            control={control}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                style={styles.textinput}
+                autoCapitalize="none"
+                mode="outlined"
+                label="Email"
+                placeholder="Digite seu email"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                right={<TextInput.Icon icon="email" />}
+              />
+            )}
+            name="email"
           />
-          <TextInput
-            style={styles.textinput}
-            value={credencial.senha}
-            onChangeText={t => setCredencial({...credencial, senha: t})}
-            autoCapitalize="none"
-            mode="outlined"
-            label="Senha"
-            placeholder="Digite sua senha"
-            secureTextEntry
-            right={<TextInput.Icon icon="eye" />}
+          {errors.email && (
+            <Text style={{...styles.textError, color: theme.colors.error}}>
+              {errors.email?.message?.toString()}
+            </Text>
+          )}
+
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                style={styles.textinput}
+                autoCapitalize="none"
+                mode="outlined"
+                label="Senha"
+                placeholder="Digite sua senha"
+                secureTextEntry
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                right={<TextInput.Icon icon="eye" />}
+              />
+            )}
+            name="senha"
           />
+          {errors.senha && (
+            <Text style={{...styles.textError, color: theme.colors.error}}>
+              {errors.senha?.message?.toString()}
+            </Text>
+          )}
+
           <Text style={styles.textEsqueceuSenha}>Esqueceu sua senha?</Text>
-          <Button style={styles.button} mode="contained" onPress={entrar}>
+          <Button style={styles.button} mode="contained" onPress={handleSubmit(entrar)}>
             Entrar
           </Button>
           <View style={styles.divCadastro}>
@@ -93,6 +167,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   textCadastro: {},
+  textError: {
+    width: 350,
+  },
   button: {
     marginTop: 50,
     marginBottom: 30,

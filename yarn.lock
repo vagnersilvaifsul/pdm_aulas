@@ -2194,6 +2194,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hookform/resolvers@npm:^3.9.1":
+  version: 3.9.1
+  resolution: "@hookform/resolvers@npm:3.9.1"
+  peerDependencies:
+    react-hook-form: ^7.0.0
+  checksum: 95464d0a07f5f5e6776aa28b5012961954b9d5908dd34f176364ed5e883121437a8131e587bee0c7576d41814af35887543b15902f253feeff4b7a500710a76a
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.13.0":
   version: 0.13.0
   resolution: "@humanwhocodes/config-array@npm:0.13.0"
@@ -2897,6 +2906,15 @@ __metadata:
     expo:
       optional: true
   checksum: 99b913bca5cfba3bbeec343ac22e352dfdcb1fed751a4a9c86c0813646e43a32a5717c8ebb354b49b2b2bf25c6cfaf4a8df9479b52b23a8f73856493c92261d7
+  languageName: node
+  linkType: hard
+
+"@react-native-firebase/firestore@npm:^21.5.0":
+  version: 21.5.0
+  resolution: "@react-native-firebase/firestore@npm:21.5.0"
+  peerDependencies:
+    "@react-native-firebase/app": 21.5.0
+  checksum: 55c21b048a4db118c95f07e913079571890a6949268db4170ed2f8deb2d8e0ccd154dc98c19f881cdc747c7092536ab88da6d2827ddbde9e87b0e8f5b1a22089
   languageName: node
   linkType: hard
 
@@ -8525,8 +8543,10 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
+    "@hookform/resolvers": ^3.9.1
     "@react-native-firebase/app": ^21.4.0
     "@react-native-firebase/auth": ^21.4.0
+    "@react-native-firebase/firestore": ^21.5.0
     "@react-native/babel-preset": 0.75.4
     "@react-native/eslint-config": 0.75.4
     "@react-native/metro-config": 0.75.4
@@ -8542,6 +8562,7 @@ __metadata:
     react: 18.3.1
     react-hook-form: ^7.53.2
     react-native: 0.75.4
+    react-native-encrypted-storage: ^4.0.3
     react-native-paper: ^5.12.5
     react-native-safe-area-context: ^4.14.0
     react-native-screens: ^3.35.0
@@ -8831,6 +8852,16 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
+  languageName: node
+  linkType: hard
+
+"react-native-encrypted-storage@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "react-native-encrypted-storage@npm:4.0.3"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 9d2999c58559f1e4f66d1baf2c3edeff96cf42027900850d94c6bbea24ac9715047ce69bf6e8a73b68aff4508cf35dd88ac494ad5905933286ef3b75cd123e30
   languageName: node
   linkType: hard
 
