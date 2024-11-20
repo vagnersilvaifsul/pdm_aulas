@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer, useTheme} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {StatusBar} from 'react-native';
-import {Icon} from 'react-native-paper';
+import {Icon, useTheme} from 'react-native-paper';
 import Home from '../telas/Home';
 import SignIn from '../telas/SignIn';
 
@@ -55,7 +55,7 @@ export default function Navigator() {
           card: theme.colors.background,
           text: theme.colors.primary,
           border: theme.colors.primary,
-          notification: theme.colors.notification,
+          notification: theme.colors.error,
         },
         dark: theme.dark,
       }}>
