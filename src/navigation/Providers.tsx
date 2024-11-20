@@ -15,9 +15,11 @@ const themeDark = {
 const temaDoApp = true; //TODO: passar para Context para mudar o tema do app
 
 export default function Providers() {
-  <AuthProvider>
-    <PaperProvider theme={temaDoApp ? themeLight : themeDark}>
-      <Navigator />
-    </PaperProvider>
-  </AuthProvider>;
+  return (
+    <AuthProvider>
+      <PaperProvider theme={temaDoApp ? themeLight : themeDark}>
+        <Navigator />
+      </PaperProvider>
+    </AuthProvider>
+  );
 }
