@@ -47,18 +47,7 @@ export default function Navigator() {
   const theme = useTheme();
 
   return (
-    <NavigationContainer
-      theme={{
-        colors: {
-          primary: theme.colors.primary,
-          background: theme.colors.background,
-          card: theme.colors.background,
-          text: theme.colors.primary,
-          border: theme.colors.primary,
-          notification: theme.colors.error,
-        },
-        dark: theme.dark,
-      }}>
+    <NavigationContainer>
       <StatusBar backgroundColor={theme.colors.primary} />
       <Stack.Navigator
         initialRouteName="AuthStack"
