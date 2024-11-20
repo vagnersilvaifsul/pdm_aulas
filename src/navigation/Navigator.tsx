@@ -54,7 +54,7 @@ export default function Navigator() {
           card: theme.colors.background,
           text: theme.colors.primary,
           border: theme.colors.primary,
-          notification: theme.colors.primary,
+          notification: theme.colors.notification,
         },
         dark: theme.dark,
       }}>
