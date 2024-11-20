@@ -12,7 +12,11 @@ const Tab = createBottomTabNavigator();
 
 function AuthStack() {
   return (
-    <Stack.Navigator initialRouteName="SignIn">
+    <Stack.Navigator
+      initialRouteName="SignIn"
+      screenOptions={{
+        headerShown: false,
+      }}>
       <Stack.Screen name="SignIn" component={SignIn} />
     </Stack.Navigator>
   );
