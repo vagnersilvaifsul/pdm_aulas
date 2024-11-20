@@ -3,6 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer, useTheme} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
+import {StatusBar} from 'react-native';
 import {Icon} from 'react-native-paper';
 import Home from '../telas/Home';
 import SignIn from '../telas/SignIn';
@@ -58,6 +59,7 @@ export default function Navigator() {
         },
         dark: theme.dark,
       }}>
+      <StatusBar backgroundColor={theme.colors.primary} />
       <Stack.Navigator
         initialRouteName="AuthStack"
         screenOptions={{
