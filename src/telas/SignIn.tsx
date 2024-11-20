@@ -66,7 +66,7 @@ export default function SignIn({navigation}: any) {
     console.log(JSON.stringify(data));
     const mensagem = await signIn(data);
     if (mensagem === 'ok') {
-      navigation.navigate('Home');
+      navigation.navigate('AppStack');
     } else {
       Alert.alert('Erro', mensagem);
     }
