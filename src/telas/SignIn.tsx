@@ -41,7 +41,6 @@ export default function SignIn({navigation}: any) {
   const {
     control,
     handleSubmit,
-    register,
     formState: {errors},
   } = useForm<any>({
     defaultValues: {
@@ -56,11 +55,6 @@ export default function SignIn({navigation}: any) {
   useEffect(() => {
     console.log('renderizou');
   });
-
-  useEffect(() => {
-    register('email');
-    register('senha');
-  }, [register]);
 
   async function entrar(data: Credencial) {
     console.log(JSON.stringify(data));
