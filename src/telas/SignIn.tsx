@@ -74,7 +74,7 @@ export default function SignIn({navigation}: any) {
       }}>
       <ScrollView>
         <>
-          <Image style={styles.image} source={require('../assets/logo512.png')} />
+          <Image style={styles.image} source={require('../assets/images/logo512.png')} />
           <Controller
             control={control}
             render={({field: {onChange, onBlur, value}}) => (

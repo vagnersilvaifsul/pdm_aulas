@@ -6,6 +6,7 @@ import React from 'react';
 import {StatusBar} from 'react-native';
 import {Icon, useTheme} from 'react-native-paper';
 import Home from '../telas/Home';
+import Preload from '../telas/Preload';
 import SignIn from '../telas/SignIn';
 
 const Stack = createNativeStackNavigator();
@@ -14,10 +15,11 @@ const Tab = createBottomTabNavigator();
 function AuthStack() {
   return (
     <Stack.Navigator
-      initialRouteName="SignIn"
+      initialRouteName="Preload"
       screenOptions={{
         headerShown: false,
       }}>
+      <Stack.Screen name="Preload" component={Preload} />
       <Stack.Screen name="SignIn" component={SignIn} />
     </Stack.Navigator>
   );
