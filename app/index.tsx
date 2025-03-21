@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableHighlight } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -47,6 +48,12 @@ export default function Home() {
 			<Text style={styles.texto}>Contador={cont}</Text>
 			<Botao titulo="Incrementar" aoClicar={incrementar} />
 			<Botao titulo="Decrementar" aoClicar={decrementar} />
+			<Botao
+				titulo="Navegar para Segunda Janela"
+				aoClicar={() => {
+					router.navigate("../segunda_janela");
+				}}
+			/>
 		</SafeAreaView>
 	);
 }
