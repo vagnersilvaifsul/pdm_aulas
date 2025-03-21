@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/context/AuthProvider";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -24,7 +25,7 @@ export default function RootLayout() {
 	}
 
 	return (
-		<>
+		<AuthProvider>
 			<Stack
 				screenOptions={{
 					headerShown: false,
@@ -33,6 +34,6 @@ export default function RootLayout() {
 				<Stack.Screen name="SegundaJanela" />
 			</Stack>
 			<StatusBar style="auto" />
-		</>
+		</AuthProvider>
 	);
 }
