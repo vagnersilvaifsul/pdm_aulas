@@ -4,10 +4,22 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+//Ampliando o tema padrão
+const themeLight = {
+	...MD3LightTheme,
+};
+
+const themeDark = {
+	...MD3DarkTheme,
+};
+
+const temaDoApp = true;
 
 export default function RootLayout() {
 	const [loaded] = useFonts({
@@ -25,15 +37,15 @@ export default function RootLayout() {
 	}
 
 	return (
-		<AuthProvider>
-			<Stack
-				screenOptions={{
-					headerShown: false,
-				}}
-			>
-				<Stack.Screen name="SegundaJanela" />
-			</Stack>
-			<StatusBar style="auto" />
-		</AuthProvider>
+		<PaperProvider theme={temaDoApp ? themeLight : themeDark}>
+			<AuthProvider>
+				<Stack
+					screenOptions={{
+						headerShown: false,
+					}}
+				></Stack>
+				<StatusBar style="auto" />
+			</AuthProvider>
+		</PaperProvider>
 	);
 }
