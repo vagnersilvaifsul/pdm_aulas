@@ -28,7 +28,10 @@ export default function Home() {
 		<SafeAreaView
 			style={{ ...styles.container, backgroundColor: theme.colors.background }}
 		>
-			<Image source={require("../assets/images/react-logo.png")} />
+			<Image
+				style={styles.image}
+				source={require("../assets/images/logo512.png")}
+			/>
 			<TextInput
 				style={styles.textinput}
 				label="Email"
@@ -47,7 +50,7 @@ export default function Home() {
 				mode="outlined"
 				autoCapitalize="none"
 				returnKeyType="go"
-				secureTextEntry
+				secureTextEntry={exibirSenha}
 				onChangeText={(text) => setSenha(text)}
 				right={
 					<TextInput.Icon
@@ -57,7 +60,9 @@ export default function Home() {
 					/>
 				}
 			/>
-			<Button onPress={entrar}>Entrar</Button>
+			<Button style={styles.button} mode="contained" onPress={entrar}>
+				Entrar
+			</Button>
 		</SafeAreaView>
 	);
 }
@@ -84,5 +89,6 @@ const styles = StyleSheet.create({
 	button: {
 		marginTop: 50,
 		marginBottom: 30,
+		width: 350,
 	},
 });
