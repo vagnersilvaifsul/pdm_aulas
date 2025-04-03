@@ -37,7 +37,7 @@ export default function RootLayout() {
 	}
 
 	return (
-		<PaperProvider theme={colorScheme === "dark" ? themeDark : themeDark}>
+		<PaperProvider theme={colorScheme === "dark" ? themeDark : themeLight}>
 			<AuthProvider>
 				<Stack
 					screenOptions={{

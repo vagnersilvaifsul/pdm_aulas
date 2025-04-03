@@ -4,7 +4,7 @@ import { Image, StyleSheet } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Home() {
+export default function SignIn() {
 	const theme = useTheme();
 	const { signIn } = useContext<any>(AuthContext);
 	const [email, setEmail] = useState("");
