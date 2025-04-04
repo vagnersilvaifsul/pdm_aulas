@@ -43,7 +43,9 @@ export default function RootLayout() {
 					screenOptions={{
 						headerShown: false,
 					}}
-				></Stack>
+				>
+					<Stack.Screen name="signIn" />
+				</Stack>
 				<StatusBar style="auto" />
 			</AuthProvider>
 		</PaperProvider>
