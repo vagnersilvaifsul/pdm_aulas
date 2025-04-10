@@ -1,11 +1,15 @@
-import { auth } from "@/firebase/firebaseInit";
+import { auth, firestore } from "@/firebase/firebaseInit";
 import { Credential } from "@/model/type";
+import { Usuario } from "@/model/Usuario";
 import * as SecureStore from "expo-secure-store";
 import {
+	createUserWithEmailAndPassword,
+	sendEmailVerification,
 	signInWithEmailAndPassword,
 	signOut,
 	UserCredential,
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import React, { createContext, useState } from "react";
 
 export const AuthContext = createContext({});
@@ -42,6 +46,39 @@ export const AuthProvider = ({ children }: any) => {
 		}
 	}
 
+	async function signUp(usuario: Usuario): Promise<string> {
+		try {
+			if (usuario.email && usuario.senha) {
+				const userCredential = await createUserWithEmailAndPassword(
+					auth,
+					usuario.email,
+					usuario.senha
+				);
+				if (userCredential) {
+					await sendEmailVerification(userCredential.user);
+				}
+				//A senha não deve ir para o Firestore
+				const usuarioFirestore = {
+					email: usuario.email,
+					nome: usuario.nome,
+					urlFoto: usuario.urlFoto,
+					curso: usuario.curso,
+					perfil: usuario.perfil,
+				};
+				await setDoc(
+					doc(firestore, "usuarios", userCredential.user.uid),
+					usuarioFirestore
+				);
+			} else {
+				return "Email e senha são obrigatórios.";
+			}
+			return "ok";
+		} catch (error: any) {
+			console.error("Erro ao cadastrar", error.code, error.message);
+			return launchServerMessageErro(error);
+		}
+	}
+
 	async function signIn(credencial: Credential): Promise<string> {
 		try {
 			let userCredential = await signInWithEmailAndPassword(
@@ -49,6 +86,9 @@ export const AuthProvider = ({ children }: any) => {
 				credencial.email,
 				credencial.senha
 			);
+			if (!userCredential.user.emailVerified) {
+				return "Você precisa verificar seu email para continuar.";
+			}
 			setUserAuth(userCredential.user);
 			armazenaCredencialnaCache(credencial);
 			console.log("Atenticou", userCredential.user);
@@ -92,7 +132,7 @@ export const AuthProvider = ({ children }: any) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ signIn, recuperaCredencialdaCache, userAuth, sair }}
+			value={{ signIn, recuperaCredencialdaCache, userAuth, sair, signUp }}
 		>
 			{children}
 		</AuthContext.Provider>

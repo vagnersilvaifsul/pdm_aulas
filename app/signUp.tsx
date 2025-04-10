@@ -1,7 +1,10 @@
+import { AuthContext } from "@/context/AuthProvider";
+import { Curso } from "@/model/Curso";
+import { Perfil } from "@/model/Perfil";
 import { Usuario } from "@/model/Usuario";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Dialog, Text, TextInput, useTheme } from "react-native-paper";
@@ -56,9 +59,25 @@ export default function SignUpScreen() {
 	const [dialogVisivel, setDialogVisivel] = useState(false);
 	const [mensagem, setMensagem] = useState({ tipo: "", mensagem: "" });
 	const [urlDevice, setUrlDevice] = useState<string | undefined>("");
+	const { signUp } = useContext<any>(AuthContext);
 
 	async function cadastrar(data: Usuario) {
 		console.log(data);
+		setRequisitando(true);
+		data.urlFoto =
+			"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
+		data.curso = Curso.CSTSI;
+		data.perfil = Perfil.Aluno;
+		const msg = await signUp(data);
+		if (msg === "ok") {
+			setMensagem({ tipo: "ok", mensagem: "Cadastro realizado com sucesso!" });
+			setDialogVisivel(true);
+			setRequisitando(false);
+		} else {
+			setMensagem({ tipo: "erro", mensagem: msg });
+			setDialogVisivel(true);
+			setRequisitando(false);
+		}
 	}
 
 	async function buscaNaGaleria() {
