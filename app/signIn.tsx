@@ -172,7 +172,7 @@ export default function SignIn() {
 						<Text
 							style={{ ...styles.textCadastro, color: theme.colors.tertiary }}
 							variant="labelMedium"
-							onPress={() => alert("Ir para tela Cadastro")}
+							onPress={() => router.push("../signUp")}
 						>
 							{" "}
 							Cadastre-se.

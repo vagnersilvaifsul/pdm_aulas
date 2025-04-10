@@ -1,7 +1,11 @@
 import { auth } from "@/firebase/firebaseInit";
 import { Credential } from "@/model/type";
 import * as SecureStore from "expo-secure-store";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+	signInWithEmailAndPassword,
+	signOut,
+	UserCredential,
+} from "firebase/auth";
 import React, { createContext, useState } from "react";
 
 export const AuthContext = createContext({});
@@ -55,6 +59,17 @@ export const AuthProvider = ({ children }: any) => {
 		}
 	}
 
+	async function sair(): Promise<string> {
+		try {
+			await SecureStore.deleteItemAsync("credencial");
+			await signOut(auth);
+			return "ok";
+		} catch (error: any) {
+			console.error(error.code, error.message);
+			return launchServerMessageErro(error);
+		}
+	}
+
 	//função utilitária
 	function launchServerMessageErro(e: any): string {
 		switch (e.code) {
@@ -77,7 +92,7 @@ export const AuthProvider = ({ children }: any) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ signIn, recuperaCredencialdaCache, userAuth }}
+			value={{ signIn, recuperaCredencialdaCache, userAuth, sair }}
 		>
 			{children}
 		</AuthContext.Provider>

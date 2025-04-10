@@ -45,6 +45,7 @@ export default function RootLayout() {
 					}}
 				>
 					<Stack.Screen name="signIn" />
+					<Stack.Screen name="signUp" />
 				</Stack>
 				<StatusBar style="auto" />
 			</AuthProvider>
