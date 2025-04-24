@@ -3,6 +3,7 @@ import { Curso } from "@/model/Curso";
 import { Perfil } from "@/model/Perfil";
 import { Usuario } from "@/model/Usuario";
 import { yupResolver } from "@hookform/resolvers/yup";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -68,7 +69,7 @@ export default function SignUpScreen() {
 			"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
 		data.curso = Curso.CSTSI;
 		data.perfil = Perfil.Aluno;
-		const msg = await signUp(data);
+		const msg = await signUp(data, urlDevice);
 		if (msg === "ok") {
 			setMensagem({ tipo: "ok", mensagem: "Cadastro realizado com sucesso!" });
 			setDialogVisivel(true);
@@ -81,11 +82,29 @@ export default function SignUpScreen() {
 	}
 
 	async function buscaNaGaleria() {
-		alert("busca na galeria");
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+		if (!result.canceled) {
+			const path = result.assets[0].uri;
+			setUrlDevice(path);
+		}
 	}
 
 	async function tiraFoto() {
-		alert("tira foto");
+		let result = await ImagePicker.launchCameraAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+		if (!result.canceled) {
+			const path = result.assets[0].uri;
+			setUrlDevice(path);
+		}
 	}
 
 	return (

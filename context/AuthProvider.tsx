@@ -1,6 +1,7 @@
-import { auth, firestore } from "@/firebase/firebaseInit";
+import { auth, firestore, storage } from "@/firebase/firebaseInit";
 import { Credential } from "@/model/type";
 import { Usuario } from "@/model/Usuario";
+import * as ImageManipulator from "expo-image-manipulator";
 import * as SecureStore from "expo-secure-store";
 import {
 	createUserWithEmailAndPassword,
@@ -10,6 +11,7 @@ import {
 	UserCredential,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { createContext, useState } from "react";
 
 export const AuthContext = createContext({});
@@ -46,7 +48,7 @@ export const AuthProvider = ({ children }: any) => {
 		}
 	}
 
-	async function signUp(usuario: Usuario): Promise<string> {
+	async function signUp(usuario: Usuario, urlDevice: string): Promise<string> {
 		try {
 			if (usuario.email && usuario.senha) {
 				const userCredential = await createUserWithEmailAndPassword(
@@ -56,6 +58,16 @@ export const AuthProvider = ({ children }: any) => {
 				);
 				if (userCredential) {
 					await sendEmailVerification(userCredential.user);
+					if (urlDevice !== "") {
+						const urlStorage = await sendImageToStorage(
+							urlDevice,
+							userCredential.user.uid
+						);
+						if (!urlStorage) {
+							return "Erro ao cadastrar o usuário. Contate o administrador.";
+						}
+						usuario.urlFoto = urlStorage;
+					}
 				}
 				//A senha não deve ir para o Firestore
 				const usuarioFirestore = {
@@ -76,6 +88,39 @@ export const AuthProvider = ({ children }: any) => {
 		} catch (error: any) {
 			console.error("Erro ao cadastrar", error.code, error.message);
 			return launchServerMessageErro(error);
+		}
+	}
+
+	//Função utilitária para tratar a imagem e transmitir pro serviço de Storage do Firebase
+	async function sendImageToStorage(
+		urlDevice: string,
+		uid: string
+	): Promise<string | null> {
+		try {
+			//1. Redimensionar a imagem que está no device e que deve ser enviada por upload
+			const imageRedimencionada = await ImageManipulator.manipulateAsync(
+				urlDevice,
+				[{ resize: { width: 150, height: 150 } }],
+				{ compress: 0.8, format: ImageManipulator.SaveFormat.PNG }
+			);
+			const data = await fetch(imageRedimencionada?.uri);
+			const blob = await data.blob();
+
+			//2. e prepara o path onde a imagem deverá ser salva
+			const storageRef = ref(storage, `imagens/usuarios/${uid}/foto.png`);
+
+			//3. Envia para o serviço de Storage do Firebase
+			await uploadBytes(storageRef, blob);
+
+			//4. Retorna a URL da imagem
+			const url = await getDownloadURL(
+				ref(storage, `imagens/usuarios/${uid}/foto.png`)
+			);
+
+			return url;
+		} catch (error: any) {
+			console.error("Erro ao enviar imagem", error.code, error.message);
+			return null;
 		}
 	}
 
