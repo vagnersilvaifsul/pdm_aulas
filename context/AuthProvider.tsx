@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }: any) => {
 			if (!userCredential.user.emailVerified) {
 				return "Você precisa verificar seu email para continuar.";
 			}
-			setUserAuth(userCredential.user);
+			setUserAuth(userCredential);
 			armazenaCredencialnaCache(credencial);
 			console.log("Atenticou", userCredential.user);
 			return "ok";
