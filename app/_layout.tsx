@@ -1,4 +1,5 @@
 import { AuthProvider } from "@/context/AuthProvider";
+import { EmpresaProvider } from "@/context/EmpresaProvider";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -39,15 +40,17 @@ export default function RootLayout() {
 	return (
 		<PaperProvider theme={colorScheme === "dark" ? themeDark : themeLight}>
 			<AuthProvider>
-				<Stack
-					screenOptions={{
-						headerShown: false,
-					}}
-				>
-					<Stack.Screen name="signIn" />
-					<Stack.Screen name="signUp" />
-				</Stack>
-				<StatusBar style="auto" />
+				<EmpresaProvider>
+					<Stack
+						screenOptions={{
+							headerShown: false,
+						}}
+					>
+						<Stack.Screen name="signIn" />
+						<Stack.Screen name="signUp" />
+					</Stack>
+					<StatusBar style="auto" />
+				</EmpresaProvider>
 			</AuthProvider>
 		</PaperProvider>
 	);
