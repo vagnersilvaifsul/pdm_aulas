@@ -1,5 +1,5 @@
 import { auth, firestore, storage } from "@/firebase/firebaseInit";
-import { Credential } from "@/model/type";
+import { Credential } from "@/model/types";
 import { Usuario } from "@/model/Usuario";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as SecureStore from "expo-secure-store";
@@ -136,7 +136,7 @@ export const AuthProvider = ({ children }: any) => {
 			}
 			setUserAuth(userCredential);
 			armazenaCredencialnaCache(credencial);
-			console.log("Atenticou", userCredential.user);
+			//console.log("Atenticou", userCredential.user);
 			return "ok";
 		} catch (error: any) {
 			console.error("Erro ao autenticar", error.code, error.message);

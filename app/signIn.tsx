@@ -1,5 +1,5 @@
 import { AuthContext } from "@/context/AuthProvider";
-import { Credential } from "@/model/type";
+import { Credential } from "@/model/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
