@@ -37,50 +37,6 @@ export const EmpresaProvider = ({ children }: any) => {
 			}
 		});
 
-		save(
-			{
-				uid: "F9ybdPczEzzWw52cKs5f",
-				nome: "Teste Update",
-				tecnologias: "Expo, React Native",
-				endereco: "Rua Teste Update, 1",
-				latitude: -31.766453286495448,
-				longitude: -52.351914793252945,
-				urlFoto: "",
-			},
-			""
-		);
-
-		//update
-		save(
-			{
-				uid: "F9ybdPczEzzWw52cKs5f",
-				nome: "Teste Update",
-				tecnologias: "Expo, React Native",
-				endereco: "Rua Teste Update, 1",
-				latitude: -31.766453286495448,
-				longitude: -52.351914793252945,
-				urlFoto: "",
-			},
-			""
-		);
-
-		//insert
-		save(
-			{
-				uid: null,
-				nome: "Teste Insert",
-				tecnologias: "Expo, React Native",
-				endereco: "Rua Teste Insert, 1",
-				latitude: -31.766453286495448,
-				longitude: -52.351914793252945,
-				urlFoto: "",
-			},
-			""
-		);
-
-		//delete
-		del("lF4jwoyj76UOVjBEFfYf");
-
 		return () => {
 			unsubscribe();
 		};
@@ -113,7 +69,7 @@ export const EmpresaProvider = ({ children }: any) => {
 	}
 
 	return (
-		<EmpresaContext.Provider value={{ empresa }}>
+		<EmpresaContext.Provider value={{ empresa, save, del }}>
 			{children}
 		</EmpresaContext.Provider>
 	);
