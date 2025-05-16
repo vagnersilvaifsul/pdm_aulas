@@ -1,7 +1,7 @@
 export class Empresa {
   
   constructor(
-    public uid: string,
+    public uid: string | null,
     public nome: string,
     public tecnologias: string,
     public endereco: string,
