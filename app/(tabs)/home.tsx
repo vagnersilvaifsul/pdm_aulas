@@ -1,10 +1,13 @@
 import { StyleSheet } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
+	const theme = useTheme();
 	return (
-		<SafeAreaView style={styles.container}>
+		<SafeAreaView
+			style={{ ...styles.container, backgroundColor: theme.colors.background }}
+		>
 			<Text>Home</Text>
 		</SafeAreaView>
 	);

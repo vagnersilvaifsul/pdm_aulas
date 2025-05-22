@@ -16,7 +16,7 @@ export default function TabLayout() {
 						// Use a transparent background on iOS to show the blur effect
 						position: "absolute",
 					},
-					default: {},
+					default: { backgroundColor: theme.colors.background },
 				}),
 			}}
 		>
@@ -27,6 +27,19 @@ export default function TabLayout() {
 					tabBarIcon: ({ color }) => (
 						<Icon
 							source="account-group"
+							color={theme.colors.primary}
+							size={20}
+						/>
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="empresas"
+				options={{
+					title: "Empresas",
+					tabBarIcon: ({ color }) => (
+						<Icon
+							source="office-building-outline"
 							color={theme.colors.primary}
 							size={20}
 						/>
