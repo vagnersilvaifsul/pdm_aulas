@@ -22,12 +22,20 @@ export default function Empresas() {
 	function irParaTelaEmpresa(empresa: Empresa | null) {
 		router.push({
 			pathname: "/empresa",
-			params: { empresa: JSON.stringify({ nome: "teste" }) },
+			params: {
+				empresa: JSON.stringify(empresa),
+			},
 		});
 		clearSearch();
 	}
 
-	async function SearchQuery(): Promise<void> {}
+	async function SearchQuery(): Promise<void> {
+		const result = await getEmpresasByName(searchQuery);
+		if (result.length > 0) {
+			console.log(result);
+			setEmpresasSearch(result);
+		}
+	}
 
 	function clearSearch() {
 		setSearchQuery("");

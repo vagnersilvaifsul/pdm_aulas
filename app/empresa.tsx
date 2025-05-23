@@ -46,11 +46,54 @@ export default function EmpresaDetalhe() {
 	const { save, del } = useContext<any>(EmpresaContext);
 	const [excluindo, setExcluindo] = useState(false);
 
-	console.log(JSON.parse(empresa.toString()));
+	// console.log(JSON.parse(empresa.toString()));
 
-	async function salvar(value: Empresa) {}
+	async function salvar(value: Empresa) {
+		value.uid = JSON.parse(empresa.toString())?.uid;
+		value.urlFoto =
+			JSON.parse(empresa.toString())?.urlFoto ||
+			"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
+		value.latitude = JSON.parse(empresa.toString())?.latitude || 0;
+		value.longitude = JSON.parse(empresa.toString())?.longitude || 0;
+		setRequisitando(true);
+		setAtualizando(false);
+		const msg = await save(value, urlDevice);
+		if (msg === "ok") {
+			setMensagem({
+				tipo: "ok",
+				mensagem: "Registro salvo com sucesso!",
+			});
+			setDialogErroVisivel(true);
+			setRequisitando(false);
+			setAtualizando(false);
+		} else {
+			setMensagem({ tipo: "erro", mensagem: msg });
+			setDialogErroVisivel(true);
+			setRequisitando(false);
+			setAtualizando(false);
+		}
+	}
 
-	async function excluirEmpresa() {}
+	async function excluirEmpresa() {
+		setDialogExcluirVisivel(false);
+		setRequisitando(true);
+		setAtualizando(true);
+		const msg = await del(JSON.parse(empresa.toString())?.uid);
+		if (msg === "ok") {
+			setMensagem({
+				tipo: "ok",
+				mensagem: "Registro excluído com sucesso!",
+			});
+			setDialogErroVisivel(true);
+			setRequisitando(false);
+			setAtualizando(false);
+		} else {
+			setMensagem({ tipo: "erro", mensagem: "Ops! algo deu errado." });
+			setDialogErroVisivel(true);
+			setRequisitando(false);
+			setAtualizando(false);
+		}
+	}
 
 	function avisarDaExclusaoPermanenteDoRegistro() {
 		setDialogExcluirVisivel(true);

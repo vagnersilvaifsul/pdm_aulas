@@ -18,7 +18,7 @@ import React, { createContext, useEffect, useState } from "react";
 export const EmpresaContext = createContext({});
 
 export const EmpresaProvider = ({ children }: any) => {
-	const [empresa, setEmpresa] = useState<Empresa[] | null>(null);
+	const [empresas, setEmpresas] = useState<Empresa[] | null>(null);
 
 	useEffect(() => {
 		const q = query(collection(firestore, "empresas"), orderBy("nome"));
@@ -36,7 +36,7 @@ export const EmpresaProvider = ({ children }: any) => {
 						urlFoto: doc.data().urlFoto,
 					});
 				});
-				setEmpresa(data);
+				setEmpresas(data);
 			}
 		});
 
@@ -47,8 +47,10 @@ export const EmpresaProvider = ({ children }: any) => {
 
 	async function save(empresa: Empresa, urlDevice: string) {
 		try {
-			if (empresa.uid) {
-				await setDoc(doc(firestore, "empresas", empresa.uid), empresa, {
+			const uid = empresa.uid;
+			delete empresa.uid;
+			if (uid) {
+				await setDoc(doc(firestore, "empresas", uid), empresa, {
 					merge: true,
 				}); //update
 			} else {
@@ -101,7 +103,7 @@ export const EmpresaProvider = ({ children }: any) => {
 	}
 
 	return (
-		<EmpresaContext.Provider value={{ empresa, save, del, getEmpresasByName }}>
+		<EmpresaContext.Provider value={{ empresas, save, del, getEmpresasByName }}>
 			{children}
 		</EmpresaContext.Provider>
 	);
