@@ -5,6 +5,7 @@ node_modules/
 
 # firebase keys
 firebaseConfig.ts
+google-services.json
 
 # Expo
 .expo/
