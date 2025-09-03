@@ -1,4 +1,5 @@
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/FirebaseInit";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useEffect } from "react";
 import { SafeAreaView, StyleSheet, Text } from "react-native";
 
@@ -9,7 +10,6 @@ export default function SignIn() {
 
 	async function entrar() {
 		console.log("Chamou entrar");
-		const auth = getAuth();
 		try {
 			const userCredential = await signInWithEmailAndPassword(
 				auth,
