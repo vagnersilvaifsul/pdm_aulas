@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export function MeuBotao({
 	texto,
@@ -7,11 +7,25 @@ export function MeuBotao({
 	texto: string;
 	aoClicar: () => void;
 }) {
-	console.log(texto);
-
 	return (
 		<View>
-			<Text onPress={aoClicar}>{texto}</Text>
+			<TouchableOpacity style={styles.botao} onPress={aoClicar}>
+				<Text style={styles.text}>{texto}</Text>
+			</TouchableOpacity>
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	botao: {
+		backgroundColor: "#6200ee",
+		borderRadius: 4,
+		padding: 12,
+		marginVertical: 8,
+	},
+	text: {
+		color: "#fff",
+		fontSize: 16,
+		textAlign: "center",
+	},
+});
