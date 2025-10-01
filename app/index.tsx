@@ -22,7 +22,7 @@ export default function SignIn() {
 		if (result === "ok") {
 			console.log("Logou?", result);
 			// Navegar para a tela principal
-			router.replace("(tabs)/index");
+			router.replace("/(tabs)");
 		} else {
 			console.error("Erro ao logar:", result);
 		}
