@@ -1,5 +1,6 @@
 import { AuthContext } from "@/context/AuthProvider";
 import { Credencial } from "@/model/types";
+import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { Image, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
@@ -20,6 +21,8 @@ export default function SignIn() {
 		const result = await singIn(credencial);
 		if (result === "ok") {
 			console.log("Logou?", result);
+			// Navegar para a tela principal
+			router.replace("(tabs)/index");
 		} else {
 			console.error("Erro ao logar:", result);
 		}
