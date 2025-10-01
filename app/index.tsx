@@ -4,6 +4,35 @@ import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { Image, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
+import * as yup from "yup";
+
+const requiredMessage = "Campo obrigatório";
+
+/*
+  /^
+  (?=.*\d)              // deve conter ao menos um dígito
+  (?=.*[a-z])           // deve conter ao menos uma letra minúscula
+  (?=.*[A-Z])           // deve conter ao menos uma letra maiúscula
+  (?=.*[$*&@#])         // deve conter ao menos um caractere especial
+  [0-9a-zA-Z$*&@#]{8,}  // deve conter ao menos 8 dos caracteres mencionados
+$/
+*/
+const schema = yup
+	.object()
+	.shape({
+		email: yup
+			.string()
+			.required(requiredMessage)
+			.matches(/\S+@\S+\.\S+/, "Email inválido"),
+		senha: yup
+			.string()
+			.required(requiredMessage)
+			.matches(
+				/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/,
+				"A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um númeral, um caractere especial e um total de 8 caracteres"
+			),
+	})
+	.required();
 
 export default function SignIn() {
 	const theme = useTheme();
@@ -11,6 +40,18 @@ export default function SignIn() {
 	const [credencial, setCredencial] = useState<Credencial>({
 		email: "",
 		senha: "",
+	});
+	const {
+		control,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<any>({
+		defaultValues: {
+			email: "",
+			senha: "",
+		},
+		mode: "onSubmit",
+		resolver: yupResolver(schema),
 	});
 
 	useEffect(() => {
