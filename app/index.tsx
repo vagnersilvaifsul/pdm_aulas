@@ -2,18 +2,15 @@ import { AuthContext } from "@/context/AuthProvider";
 import { Credencial } from "@/model/types";
 import { useContext, useEffect, useState } from "react";
 import { Image, SafeAreaView, ScrollView, StyleSheet } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { Button, TextInput, useTheme } from "react-native-paper";
 
 export default function SignIn() {
+	const theme = useTheme();
 	const { singIn } = useContext<any>(AuthContext);
 	const [credencial, setCredencial] = useState<Credencial>({
 		email: "",
 		senha: "",
 	});
-
-	useEffect(() => {
-		entrar();
-	}, []);
 
 	useEffect(() => {
 		console.log(credencial);
@@ -29,7 +26,9 @@ export default function SignIn() {
 	}
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<SafeAreaView
+			style={{ ...styles.container, backgroundColor: theme.colors.background }}
+		>
 			<ScrollView>
 				<>
 					<Image
