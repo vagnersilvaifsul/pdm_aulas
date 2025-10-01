@@ -1,9 +1,11 @@
 import { AuthContext } from "@/context/AuthProvider";
 import { Credencial } from "@/model/types";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Image, SafeAreaView, ScrollView, StyleSheet } from "react-native";
-import { Button, TextInput, useTheme } from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import * as yup from "yup";
 
 const requiredMessage = "Campo obrigatório";
@@ -53,13 +55,15 @@ export default function SignIn() {
 		mode: "onSubmit",
 		resolver: yupResolver(schema),
 	});
+	const [exibirSenha, setExibirSenha] = useState(true);
 
 	useEffect(() => {
 		console.log(credencial);
 	});
 
-	async function entrar() {
-		const result = await singIn(credencial);
+	async function entrar(data: Credencial) {
+		console.log("Entrar", data);
+		const result = await singIn(data);
 		if (result === "ok") {
 			console.log("Logou?", result);
 			// Navegar para a tela principal
@@ -79,31 +83,72 @@ export default function SignIn() {
 						style={styles.image}
 						source={require("../assets/images/logo512.png")}
 					/>
-					<TextInput
-						style={styles.textinput}
-						label="Email"
-						placeholder="Digite seu email"
-						mode="outlined"
-						autoCapitalize="none"
-						returnKeyType="next"
-						keyboardType="email-address"
-						onChangeText={(t) => setCredencial({ ...credencial, email: t })}
-						value={credencial.email}
-						right={<TextInput.Icon icon="email" color={"white"} />}
+					<Controller
+						control={control}
+						render={({ field: { onChange, onBlur, value } }) => (
+							<TextInput
+								style={styles.textinput}
+								label="Email"
+								placeholder="Digite seu email"
+								mode="outlined"
+								autoCapitalize="none"
+								returnKeyType="next"
+								keyboardType="email-address"
+								onBlur={onBlur}
+								onChangeText={onChange}
+								value={value}
+								right={<TextInput.Icon icon="email" />}
+							/>
+						)}
+						name="email"
 					/>
-					<TextInput
-						style={styles.textinput}
-						label="Senha"
-						placeholder="Digite sua senha"
-						mode="outlined"
-						autoCapitalize="none"
-						returnKeyType="go"
-						secureTextEntry={true}
-						onChangeText={(t) => setCredencial({ ...credencial, senha: t })}
-						value={credencial.senha}
-						right={<TextInput.Icon icon="eye" color={"white"} />}
+					{errors.email && (
+						<Text style={{ ...styles.textError, color: theme.colors.error }}>
+							{errors.email?.message?.toString()}
+						</Text>
+					)}
+					<Controller
+						control={control}
+						rules={{
+							required: true,
+						}}
+						render={({ field: { onChange, onBlur, value } }) => (
+							<TextInput
+								style={styles.textinput}
+								label="Senha"
+								placeholder="Digite sua senha"
+								mode="outlined"
+								autoCapitalize="none"
+								returnKeyType="go"
+								secureTextEntry={exibirSenha}
+								onBlur={onBlur}
+								onChangeText={onChange}
+								value={value}
+								right={
+									<TextInput.Icon
+										icon="eye"
+										color={
+											exibirSenha
+												? theme.colors.onBackground
+												: theme.colors.error
+										}
+										onPress={() => setExibirSenha((previus) => !previus)}
+									/>
+								}
+							/>
+						)}
+						name="senha"
 					/>
-					<Button style={styles.button} mode="contained" onPress={entrar}>
+					{errors.senha && (
+						<Text style={{ ...styles.textError, color: theme.colors.error }}>
+							{errors.senha?.message?.toString()}
+						</Text>
+					)}
+					<Button
+						style={styles.button}
+						mode="contained"
+						onPress={handleSubmit(entrar)}
+					>
 						{"Entrar"}
 					</Button>
 				</>
@@ -140,5 +185,8 @@ const styles = StyleSheet.create({
 	button: {
 		marginTop: 50,
 		marginBottom: 30,
+	},
+	textError: {
+		width: 350,
 	},
 });
