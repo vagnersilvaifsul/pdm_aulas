@@ -1,5 +1,6 @@
 import { auth } from "@/firebase/FirebaseInit";
 import { Credencial } from "@/model/types";
+import { Usuario } from "@/model/Usuario";
 import * as SecureStore from "expo-secure-store";
 import {
 	createUserWithEmailAndPassword,
@@ -58,17 +59,40 @@ export const AuthProvider = ({ children }: any) => {
 		}
 	}
 
-	async function singUp(): Promise<string> {
-		const userCredential = await createUserWithEmailAndPassword(
-			auth,
-			"vagnersilva@ifsul.edu.br",
-			"Teste12@"
-		);
-		if (userCredential) {
-			await sendEmailVerification(userCredential.user);
+	async function signUp(usuario: Usuario): Promise<string> {
+		try {
+			console.log("Iniciando cadastro...");
+			console.log(usuario);
+			if (usuario.email && usuario.senha) {
+				const userCredential = await createUserWithEmailAndPassword(
+					auth,
+					usuario.email,
+					usuario.senha
+				);
+				if (userCredential) {
+					await sendEmailVerification(userCredential.user);
+					//A senha não deve ser persistida no serviço Firetore, ela é gerida pelo serviço Authentication
+					const usuarioFirestore = {
+						email: usuario.email,
+						nome: usuario.nome,
+						urlFoto: usuario.urlFoto,
+						curso: usuario.curso,
+						perfil: usuario.perfil,
+					};
+					// await setDoc(
+					// 	doc(firestore, "usuarios", userCredential.user.uid),
+					// 	usuarioFirestore,
+					// 	{ merge: true }
+					// );
+				}
+			} else {
+				return "Confira se você digitou o email e a senha.";
+			}
+			return "ok";
+		} catch (e: any) {
+			console.error(e.code, e.message);
+			return launchServerMessageErro(e);
 		}
-		console.log(userCredential.user);
-		return "ok";
 	}
 
 	async function sair(): Promise<string> {
@@ -104,7 +128,7 @@ export const AuthProvider = ({ children }: any) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ singIn, singUp, sair, recuperaCredencialdaCache }}
+			value={{ singIn, signUp, sair, recuperaCredencialdaCache }}
 		>
 			{children}
 		</AuthContext.Provider>
