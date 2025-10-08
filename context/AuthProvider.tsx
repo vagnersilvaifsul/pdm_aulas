@@ -1,5 +1,6 @@
 import { auth } from "@/firebase/FirebaseInit";
 import { Credencial } from "@/model/types";
+import * as SecureStore from "expo-secure-store";
 import {
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
@@ -15,6 +16,32 @@ export const AuthProvider = ({ children }: any) => {
 		sair();
 	}, []);
 
+	async function armazenaCredencialnaCache(
+		credencial: Credencial
+	): Promise<void> {
+		try {
+			await SecureStore.setItemAsync(
+				"credencial",
+				JSON.stringify({
+					email: credencial.email,
+					senha: credencial.senha,
+				})
+			);
+		} catch (e) {
+			console.error("AuthProvider, armazenaCredencialnaCache: " + e);
+		}
+	}
+
+	async function recuperaCredencialdaCache(): Promise<null | string> {
+		try {
+			const credencial = await SecureStore.getItemAsync("credencial");
+			return credencial ? JSON.parse(credencial) : null;
+		} catch (e) {
+			console.error("AuthProvider, recuperaCredencialdaCache: " + e);
+			return null;
+		}
+	}
+
 	async function singIn(credencial: Credencial): Promise<string> {
 		try {
 			const userCredential = await signInWithEmailAndPassword(
@@ -24,6 +51,7 @@ export const AuthProvider = ({ children }: any) => {
 			);
 			console.log(userCredential.user);
 			console.log(userCredential.user.email);
+			armazenaCredencialnaCache(credencial);
 			return "ok";
 		} catch (error: any) {
 			return launchServerMessageErro(error);
@@ -74,7 +102,9 @@ export const AuthProvider = ({ children }: any) => {
 	}
 
 	return (
-		<AuthContext.Provider value={{ singIn, singUp, sair }}>
+		<AuthContext.Provider
+			value={{ singIn, singUp, sair, recuperaCredencialdaCache }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);
