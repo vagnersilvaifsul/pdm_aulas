@@ -4,6 +4,7 @@ import {
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
 	signInWithEmailAndPassword,
+	signOut,
 } from "firebase/auth";
 import React, { createContext, useEffect } from "react";
 
@@ -11,7 +12,7 @@ export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }: any) => {
 	useEffect(() => {
-		singUp();
+		sair();
 	}, []);
 
 	async function singIn(credencial: Credencial): Promise<string> {
@@ -42,6 +43,16 @@ export const AuthProvider = ({ children }: any) => {
 		return "ok";
 	}
 
+	async function sair(): Promise<string> {
+		try {
+			await signOut(auth);
+			return "ok";
+		} catch (error: any) {
+			console.error(error.code, error.message);
+			return launchServerMessageErro(error);
+		}
+	}
+
 	//função utilitária
 	function launchServerMessageErro(e: any): string {
 		switch (e.code) {
@@ -63,6 +74,8 @@ export const AuthProvider = ({ children }: any) => {
 	}
 
 	return (
-		<AuthContext.Provider value={{ singIn }}>{children}</AuthContext.Provider>
+		<AuthContext.Provider value={{ singIn, singUp, sair }}>
+			{children}
+		</AuthContext.Provider>
 	);
 };
