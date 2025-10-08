@@ -1,11 +1,19 @@
 import { auth } from "@/firebase/FirebaseInit";
 import { Credencial } from "@/model/types";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import React, { createContext } from "react";
+import {
+	createUserWithEmailAndPassword,
+	sendEmailVerification,
+	signInWithEmailAndPassword,
+} from "firebase/auth";
+import React, { createContext, useEffect } from "react";
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }: any) => {
+	useEffect(() => {
+		singUp();
+	}, []);
+
 	async function singIn(credencial: Credencial): Promise<string> {
 		try {
 			const userCredential = await signInWithEmailAndPassword(
@@ -19,6 +27,19 @@ export const AuthProvider = ({ children }: any) => {
 		} catch (error: any) {
 			return launchServerMessageErro(error);
 		}
+	}
+
+	async function singUp(): Promise<string> {
+		const userCredential = await createUserWithEmailAndPassword(
+			auth,
+			"vagnersilva@ifsul.edu.br",
+			"Teste12@"
+		);
+		if (userCredential) {
+			await sendEmailVerification(userCredential.user);
+		}
+		console.log(userCredential.user);
+		return "ok";
 	}
 
 	//função utilitária

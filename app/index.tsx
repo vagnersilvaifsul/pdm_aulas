@@ -4,8 +4,21 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Image, SafeAreaView, ScrollView, StyleSheet } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import {
+	Image,
+	SafeAreaView,
+	ScrollView,
+	StyleSheet,
+	View,
+} from "react-native";
+import {
+	Button,
+	Dialog,
+	Divider,
+	Text,
+	TextInput,
+	useTheme,
+} from "react-native-paper";
 import * as yup from "yup";
 
 const requiredMessage = "Campo obrigatório";
@@ -56,6 +69,8 @@ export default function SignIn() {
 		resolver: yupResolver(schema),
 	});
 	const [exibirSenha, setExibirSenha] = useState(true);
+	const [dialogVisivel, setDialogVisivel] = useState(false);
+	const [mensagemDialog, setMensagemDialog] = useState("");
 
 	useEffect(() => {
 		console.log(credencial);
@@ -69,6 +84,8 @@ export default function SignIn() {
 			// Navegar para a tela principal
 			router.replace("/(tabs)");
 		} else {
+			setMensagemDialog(result);
+			setDialogVisivel(true);
 			console.error("Erro ao logar:", result);
 		}
 	}
@@ -151,8 +168,29 @@ export default function SignIn() {
 					>
 						{"Entrar"}
 					</Button>
+					<Divider />
+					<View style={styles.divCadastro}>
+						<Text variant="labelMedium">Não tem uma conta?</Text>
+						<Text
+							style={{ ...styles.textCadastro, color: theme.colors.tertiary }}
+							variant="labelMedium"
+							onPress={() => router.push("/signUp")}
+						>
+							{" "}
+							Cadastre-se.
+						</Text>
+					</View>
 				</>
 			</ScrollView>
+			<Dialog visible={dialogVisivel} onDismiss={() => setDialogVisivel(false)}>
+				<Dialog.Icon icon="alert-circle-outline" size={60} />
+				<Dialog.Title style={styles.textDialog}>Erro</Dialog.Title>
+				<Dialog.Content>
+					<Text style={styles.textDialog} variant="bodyLarge">
+						{mensagemDialog}
+					</Text>
+				</Dialog.Content>
+			</Dialog>
 		</SafeAreaView>
 	);
 }
@@ -189,4 +227,13 @@ const styles = StyleSheet.create({
 	textError: {
 		width: 350,
 	},
+	textDialog: {
+		textAlign: "center",
+	},
+	divCadastro: {
+		marginTop: 20,
+		flexDirection: "row",
+		justifyContent: "center",
+	},
+	textCadastro: {},
 });
