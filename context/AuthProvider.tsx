@@ -73,6 +73,7 @@ export const AuthProvider = ({ children }: any) => {
 
 	async function sair(): Promise<string> {
 		try {
+			SecureStore.deleteItemAsync("credencial");
 			await signOut(auth);
 			return "ok";
 		} catch (error: any) {
