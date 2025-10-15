@@ -1,4 +1,4 @@
-import { auth } from "@/firebase/FirebaseInit";
+import { auth, firestore } from "@/firebase/FirebaseInit";
 import { Credencial } from "@/model/types";
 import { Usuario } from "@/model/Usuario";
 import * as SecureStore from "expo-secure-store";
@@ -8,6 +8,7 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import React, { createContext, useEffect } from "react";
 
 export const AuthContext = createContext({});
@@ -50,8 +51,9 @@ export const AuthProvider = ({ children }: any) => {
 				credencial.email,
 				credencial.senha
 			);
-			console.log(userCredential.user);
-			console.log(userCredential.user.email);
+			if (userCredential.user.emailVerified === false) {
+				return "Você precisa verificar seu email para continuar.";
+			}
 			armazenaCredencialnaCache(credencial);
 			return "ok";
 		} catch (error: any) {
@@ -61,8 +63,6 @@ export const AuthProvider = ({ children }: any) => {
 
 	async function signUp(usuario: Usuario): Promise<string> {
 		try {
-			console.log("Iniciando cadastro...");
-			console.log(usuario);
 			if (usuario.email && usuario.senha) {
 				const userCredential = await createUserWithEmailAndPassword(
 					auth,
@@ -79,11 +79,11 @@ export const AuthProvider = ({ children }: any) => {
 						curso: usuario.curso,
 						perfil: usuario.perfil,
 					};
-					// await setDoc(
-					// 	doc(firestore, "usuarios", userCredential.user.uid),
-					// 	usuarioFirestore,
-					// 	{ merge: true }
-					// );
+					await setDoc(
+						doc(firestore, "usuarios", userCredential.user.uid),
+						usuarioFirestore,
+						{ merge: true }
+					);
 				}
 			} else {
 				return "Confira se você digitou o email e a senha.";

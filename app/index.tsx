@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { AuthContext } from "@/context/AuthProvider";
 import { router } from "expo-router";
 import { useContext, useEffect } from "react";
@@ -15,12 +16,8 @@ export default function Preload() {
 
 	async function logar() {
 		const credencial = await recuperaCredencialdaCache();
-		console.log("credencial cache: ");
-		console.log(credencial);
-
 		if (credencial) {
 			// await singIn(JSON.parse(credencial));
-			console.log("logado com cache");
 			router.replace("/(tabs)");
 		} else {
 			router.replace("/signIn");

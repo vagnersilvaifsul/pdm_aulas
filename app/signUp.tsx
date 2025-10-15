@@ -65,7 +65,7 @@ export default function SignUp() {
 		setRequisitando(true);
 		data.curso = Curso.CSTSI;
 		data.perfil = Perfil.Aluno;
-		console.log(data);
+		data.urlFoto = "path/to/image.png";
 		const msg = await signUp(data);
 		if (msg === "ok") {
 			setMensagem({

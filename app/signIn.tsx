@@ -72,15 +72,11 @@ export default function SignIn() {
 	const [dialogVisivel, setDialogVisivel] = useState(false);
 	const [mensagemDialog, setMensagemDialog] = useState("");
 
-	useEffect(() => {
-		console.log(credencial);
-	});
+	useEffect(() => {});
 
 	async function entrar(data: Credencial) {
-		console.log("Entrar", data);
 		const result = await singIn(data);
 		if (result === "ok") {
-			console.log("Logou?", result);
 			// Navegar para a tela principal
 			router.replace("/(tabs)");
 		} else {
