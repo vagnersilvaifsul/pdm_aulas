@@ -7,9 +7,15 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import {
+	Image,
+	KeyboardAvoidingView,
+	Platform,
+	ScrollView,
+	StyleSheet,
+	View,
+} from "react-native";
 import { Button, Dialog, Text, TextInput, useTheme } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
 
 const requiredMessage = "Campo obrigatório";
@@ -108,11 +114,12 @@ export default function SignUp() {
 	}
 
 	return (
-		<SafeAreaView
+		<KeyboardAvoidingView
 			style={{
 				...styles.container,
 				backgroundColor: theme.colors.background,
 			}}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
 			<ScrollView
 				showsHorizontalScrollIndicator={false}
@@ -291,7 +298,7 @@ export default function SignUp() {
 					</Text>
 				</Dialog.Content>
 			</Dialog>
-		</SafeAreaView>
+		</KeyboardAvoidingView>
 	);
 }
 
