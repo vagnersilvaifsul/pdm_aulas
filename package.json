@@ -42,7 +42,9 @@
     "react-native-screens": "~4.11.1",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "yup": "^1.7.1"
+    "yup": "^1.7.1",
+    "expo-image-picker": "~16.1.4",
+    "expo-image-manipulator": "~13.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

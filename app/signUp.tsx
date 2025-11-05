@@ -3,6 +3,7 @@ import { Curso } from "@/model/Curso";
 import { Perfil } from "@/model/Perfil";
 import { Usuario } from "@/model/Usuario";
 import { yupResolver } from "@hookform/resolvers/yup";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -65,8 +66,7 @@ export default function SignUp() {
 		setRequisitando(true);
 		data.curso = Curso.CSTSI;
 		data.perfil = Perfil.Aluno;
-		data.urlFoto = "path/to/image.png";
-		const msg = await signUp(data);
+		const msg = await signUp(data, urlDevice);
 		if (msg === "ok") {
 			setMensagem({
 				tipo: "ok",
@@ -82,11 +82,29 @@ export default function SignUp() {
 	}
 
 	async function buscaNaGaleria() {
-		alert("Em desenvolvimento");
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: "images",
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		if (!result.canceled) {
+			setUrlDevice(result.assets[0].uri);
+		}
 	}
 
 	async function tiraFoto() {
-		alert("Em desenvolvimento");
+		let result = await ImagePicker.launchCameraAsync({
+			mediaTypes: "images",
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		if (!result.canceled) {
+			setUrlDevice(result.assets[0].uri);
+		}
 	}
 
 	return (
