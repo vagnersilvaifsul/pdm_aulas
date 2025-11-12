@@ -1,9 +1,8 @@
+import { AuthProvider } from "@/context/AuthProvider";
+import { EmpresaProvider } from "@/context/EmpresaProvider";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
-
-import { AuthProvider } from "@/context/AuthProvider";
 import { useColorScheme } from "react-native";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 
@@ -41,18 +40,20 @@ export default function RootLayout() {
 	return (
 		<PaperProvider theme={colorScheme === "dark" ? themeDark : themeLight}>
 			<AuthProvider>
-				<Stack
-					initialRouteName="index"
-					screenOptions={{
-						headerShown: false,
-					}}
-				>
-					<Stack.Screen name="index" />
-					<Stack.Screen name="(tabs)" />
-					<Stack.Screen name="signIn" />
-					<Stack.Screen name="signUp" />
-				</Stack>
-				<StatusBar style="auto" />
+				<EmpresaProvider>
+					<Stack
+						initialRouteName="index"
+						screenOptions={{
+							headerShown: false,
+						}}
+					>
+						<Stack.Screen name="index" />
+						<Stack.Screen name="(tabs)" />
+						<Stack.Screen name="signIn" />
+						<Stack.Screen name="signUp" />
+					</Stack>
+					<StatusBar style="auto" />
+				</EmpresaProvider>
 			</AuthProvider>
 		</PaperProvider>
 	);
