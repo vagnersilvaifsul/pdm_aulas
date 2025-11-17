@@ -28,41 +28,46 @@ export const EmpresaProvider = ({ children }: any) => {
 	//Read
 	useEffect(() => {
 		//Fetch empresas from API or database
-		const q = collection(firestore, "empresas");
-		const unsubscribe = onSnapshot(q, (doc) => {
-			console.log(doc);
-			if (!doc.empty) {
-				let data: Empresa[] = [];
-				doc.forEach((doc) => {
-					data.push({
-						uid: doc.id,
-						nome: doc.data().nome,
-						tecnologias: doc.data().tecnologias,
-						cep: doc.data().cep,
-						endereco: doc.data().endereco,
-						latitude: doc.data().latitude,
-						longitude: doc.data().longitude,
-						urlFoto: doc.data().urlFoto,
-					} as Empresa);
-				});
-				setEmpresas(data);
+		const unsubscribe = onSnapshot(
+			collection(firestore, "empresas"),
+			(snapshot) => {
+				console.log(snapshot);
+				if (!snapshot.empty) {
+					let data: Empresa[] = [];
+					snapshot.forEach((doc) => {
+						data.push({
+							uid: doc.id,
+							nome: doc.data().nome,
+							tecnologias: doc.data().tecnologias,
+							cep: doc.data().cep,
+							endereco: doc.data().endereco,
+							latitude: doc.data().latitude,
+							longitude: doc.data().longitude,
+							urlFoto: doc.data().urlFoto,
+						} as Empresa);
+					});
+					console.log(data);
+					setEmpresas(data);
+				}
 			}
-		});
+		);
 		// Insert
 		// insert({
-		// 	nome: "teste 2 insert",
+		// 	nome: "teste 1 insert",
 		// 	tecnologias: "react, react-native",
-		// 	endereco: "Rua Teste 2 insert",
+		// 	cep: "96060-000",
+		// 	endereco: "Rua Teste 1 insert",
 		// 	latitude: -31.766453286495448,
 		// 	longitude: -52.351914793252945,
 		// 	urlFoto:
 		// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
 		// } as Empresa);
-		// Update
+		//Update
 		// update({
-		// 	uid: "Wa8fa9TxiIOvJL5oJEtB",
+		// 	uid: "ARKdoFAZezSiQN78ZpU7",
 		// 	nome: "teste 1 update",
 		// 	tecnologias: "react, react-native",
+		// 	cep: "96060-060",
 		// 	endereco: "Rua Teste 1 update",
 		// 	latitude: -31.766453286495448,
 		// 	longitude: -52.351914793252945,
@@ -70,8 +75,12 @@ export const EmpresaProvider = ({ children }: any) => {
 		// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
 		// } as Empresa);
 		// Delete
-		//remove("Wa8fa9TxiIOvJL5oJEtB");
-		return () => unsubscribe();
+		//remove("DWXpjXXkw2gzi6ROdI6T");
+		//remove o listener ao desmontar o componente
+		return () => {
+			unsubscribe();
+			unsubscribe2();
+		};
 	}, []);
 
 	//Insert
