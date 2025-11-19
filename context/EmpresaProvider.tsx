@@ -6,10 +6,13 @@ import {
 	collection,
 	deleteDoc,
 	doc,
+	endAt,
+	getDocs,
 	onSnapshot,
 	orderBy,
 	query,
 	setDoc,
+	startAt,
 } from "firebase/firestore";
 import React, { createContext, useEffect } from "react";
 
@@ -25,7 +28,6 @@ export const EmpresaProvider = ({ children }: any) => {
 		if (firestore) {
 			const q = query(collection(firestore, "empresas"), orderBy("nome"));
 			unsubscribe = onSnapshot(q, (querySnapshot) => {
-				console.log(querySnapshot);
 				if (querySnapshot) {
 					let data: Empresa[] = [];
 					querySnapshot.forEach((doc) => {
@@ -40,7 +42,6 @@ export const EmpresaProvider = ({ children }: any) => {
 							urlFoto: doc.data().urlFoto,
 						});
 					});
-					console.log(data);
 					setEmpresas(data);
 				}
 			});
@@ -119,8 +120,40 @@ export const EmpresaProvider = ({ children }: any) => {
 		}
 	}
 
+	async function getEmpresasByName(nome: string): Promise<Empresa[]> {
+		try {
+			let data: Empresa[] = [];
+			const ref = collection(firestore, "empresas");
+			const q = query(
+				ref,
+				orderBy("nome"),
+				startAt(nome),
+				endAt(nome + "\uf8ff")
+			);
+			const querySnapshot = await getDocs(q);
+			querySnapshot.forEach((doc) => {
+				data.push({
+					uid: doc.id,
+					nome: doc.data().nome,
+					tecnologias: doc.data().tecnologias,
+					cep: doc.data().cep,
+					endereco: doc.data().endereco,
+					latitude: doc.data().latitude,
+					longitude: doc.data().longitude,
+					urlFoto: doc.data().urlFoto,
+				});
+			});
+			return data;
+		} catch (error) {
+			console.error("Error em getEmpresasByName: ", error);
+			return [];
+		}
+	}
+
 	return (
-		<EmpresaContext.Provider value={{ insert, update, remove, empresas }}>
+		<EmpresaContext.Provider
+			value={{ insert, update, remove, empresas, getEmpresasByName }}
+		>
 			{children}
 		</EmpresaContext.Provider>
 	);
