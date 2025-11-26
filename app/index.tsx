@@ -20,9 +20,9 @@ Notifications.setNotificationHandler({
 
 export default function Preload() {
 	const theme = useTheme();
-	const { recuperaCredencialdaCache } = useContext<any>(AuthContext);
-	const notificationListener = useRef<Notifications.EventSubscription>({});
-	const responseListener = useRef<Notifications.EventSubscription>({});
+	const { recuperaCredencialdaCache, signIn } = useContext<any>(AuthContext);
+	const notificationListener = useRef<Notifications.EventSubscription>(null);
+	const responseListener = useRef<Notifications.EventSubscription>(null);
 
 	useEffect(() => {
 		//ao montar o componente tenta logar com as credenciais da cache
@@ -106,12 +106,15 @@ export default function Preload() {
 
 	async function logar() {
 		const credencial = await recuperaCredencialdaCache();
+		console.log(credencial);
+
 		if (credencial) {
 			//se tem credenciais armazenadas tenta logar
 			const mensagem = await signIn(credencial);
 			if (mensagem === "ok") {
 				const lastNotification =
 					await Notifications.getLastNotificationResponseAsync();
+				console.log(lastNotification);
 				switch (lastNotification?.notification.request.content.data.rota) {
 					case "usuarios":
 						router.replace("/(tabs)");
