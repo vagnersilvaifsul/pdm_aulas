@@ -1,5 +1,5 @@
 import { MeuBotao } from "@/components/Meubutton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 /*
@@ -8,7 +8,22 @@ import { StyleSheet, Text, View } from "react-native";
 export default function HomeScreen() {
 	const [count, setCount] = useState(0);
 
-	console.log("Home Screen");
+	//Cliclo de vida do componente: montagem, atualização e desmontagem.
+	useEffect(() => {
+		console.log("O componente foi montado.");
+
+		return () => {
+			console.log("O componente foi desmontado.");
+		};
+	}, []); //O useEffect é chamado toda vez que o count é atualizado.
+
+	useEffect(() => {
+		console.log("O count foi atualizado quando o count é atualizado: ", count);
+	}, [count]); //O useEffect é chamado toda vez que o count é atualizado.
+
+	useEffect(() => {
+		console.log("O count foi atualizado: ", count);
+	});
 
 	/*
 	 Um componente React deve retornar um JSX.

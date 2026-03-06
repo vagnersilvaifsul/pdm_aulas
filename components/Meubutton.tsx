@@ -1,7 +1,6 @@
 import { StyleSheet, Text, TouchableHighlight } from "react-native";
 
 export function MeuBotao(props: any) {
-	console.log("Meu Botão", props);
 	return (
 		<TouchableHighlight onPress={props.onClick} underlayColor="lightgray">
 			<Text style={styles.text}>{props.texto}</Text>
