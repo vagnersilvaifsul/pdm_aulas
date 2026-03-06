@@ -1,14 +1,6 @@
+import { MeuBotao } from "@/components/Meubutton";
 import { useState } from "react";
-import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
-
-export function MeuBotao(props: any) {
-	console.log("Meu Botão", props);
-	return (
-		<TouchableHighlight onPress={props.onClick} underlayColor="lightgray">
-			<Text style={styles.text}>{props.texto}</Text>
-		</TouchableHighlight>
-	);
-}
+import { StyleSheet, Text, View } from "react-native";
 
 /*
  Uma função só é considerada um componente React se retornar um JSX.
@@ -26,6 +18,7 @@ export default function HomeScreen() {
 			<Text style={styles.text}>Home Screen {count}</Text>
 			<MeuBotao texto="Increment" onClick={() => setCount(count + 1)} />
 			<MeuBotao texto="Decrement" onClick={() => setCount(count - 1)} />
+			<MeuBotao texto="Reset" onClick={() => setCount(0)} />
 		</View>
 	);
 }
