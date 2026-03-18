@@ -2,11 +2,12 @@ import { AuthContext } from "@/context/AuthProvider";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { StyleSheet } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { Button, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Entrar() {
 	const { signIn } = useContext<any>(AuthContext);
+	const theme = useTheme();
 	const [email, setEmail] = useState<string>("");
 	const [senha, setSenha] = useState<string>("");
 
@@ -22,7 +23,9 @@ export default function Entrar() {
 	console.log(email);
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<SafeAreaView
+			style={{ ...styles.container, backgroundColor: theme.colors.background }}
+		>
 			<TextInput
 				style={styles.textinput}
 				label="Email"
@@ -74,5 +77,6 @@ const styles = StyleSheet.create({
 	button: {
 		marginTop: 50,
 		marginBottom: 30,
+		width: "80%",
 	},
 });
