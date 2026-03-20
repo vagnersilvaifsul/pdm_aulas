@@ -1,4 +1,5 @@
 import { auth } from "@/firebase/firebaseInit";
+import { Credencial } from "@/model/types";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import { createContext, useState } from "react";
 
@@ -7,12 +8,12 @@ export const AuthContext = createContext({});
 export const AuthProvider = ({ children }: any) => {
 	const [userFirebase, setUserFirebase] = useState<any>(null);
 
-	async function signIn(email: string, senha: string): Promise<string> {
+	async function signIn(credencial: Credencial): Promise<string> {
 		try {
 			const userCredencial = await signInWithEmailAndPassword(
 				auth,
-				email,
-				senha,
+				credencial.email,
+				credencial.senha,
 			);
 			setUserFirebase(userCredencial.user);
 			return "ok";
