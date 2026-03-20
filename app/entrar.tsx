@@ -148,16 +148,17 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	textinput: {
-		width: 350,
+		width: "80%",
 		height: 50,
 		marginTop: 20,
 		backgroundColor: "transparent",
 	},
 	textError: {
-		width: 350,
+		width: "80%",
 	},
 	button: {
 		marginTop: 50,
 		marginBottom: 30,
+		width: "80%",
 	},
 });
