@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
@@ -69,74 +69,83 @@ export default function Entrar() {
 		<SafeAreaView
 			style={{ ...styles.container, backgroundColor: theme.colors.background }}
 		>
-			<Controller
-				control={control}
-				render={({ field: { onChange, onBlur, value } }) => (
-					<TextInput
-						style={styles.textinput}
-						label="Email"
-						placeholder="Digite seu email"
-						mode="outlined"
-						autoCapitalize="none"
-						returnKeyType="next"
-						keyboardType="email-address"
-						onBlur={onBlur}
-						onChangeText={onChange}
-						value={value}
-						right={<TextInput.Icon icon="email" />}
-					/>
-				)}
-				name="email"
-			/>
-			{errors.email && (
-				<Text style={{ ...styles.textError, color: theme.colors.error }}>
-					{errors.email?.message?.toString()}
-				</Text>
-			)}
-
-			<Controller
-				control={control}
-				rules={{
-					required: true,
-				}}
-				render={({ field: { onChange, onBlur, value } }) => (
-					<TextInput
-						style={styles.textinput}
-						label="Senha"
-						placeholder="Digite sua senha"
-						mode="outlined"
-						autoCapitalize="none"
-						returnKeyType="go"
-						secureTextEntry={exibirSenha}
-						onBlur={onBlur}
-						onChangeText={onChange}
-						value={value}
-						right={
-							<TextInput.Icon
-								icon="eye"
-								color={
-									exibirSenha ? theme.colors.onBackground : theme.colors.error
-								}
-								onPress={() => setExibirSenha((previus) => !previus)}
-							/>
-						}
-					/>
-				)}
-				name="senha"
-			/>
-			{errors.senha && (
-				<Text style={{ ...styles.textError, color: theme.colors.error }}>
-					{errors.senha?.message?.toString()}
-				</Text>
-			)}
-
-			<Button
-				style={styles.button}
-				mode="contained"
-				onPress={handleSubmit(entrar)}
+			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
 			>
-				Entrar
-			</Button>
+				<>
+					<Controller
+						control={control}
+						render={({ field: { onChange, onBlur, value } }) => (
+							<TextInput
+								style={styles.textinput}
+								label="Email"
+								placeholder="Digite seu email"
+								mode="outlined"
+								autoCapitalize="none"
+								returnKeyType="next"
+								keyboardType="email-address"
+								onBlur={onBlur}
+								onChangeText={onChange}
+								value={value}
+								right={<TextInput.Icon icon="email" />}
+							/>
+						)}
+						name="email"
+					/>
+					{errors.email && (
+						<Text style={{ ...styles.textError, color: theme.colors.error }}>
+							{errors.email?.message?.toString()}
+						</Text>
+					)}
+
+					<Controller
+						control={control}
+						rules={{
+							required: true,
+						}}
+						render={({ field: { onChange, onBlur, value } }) => (
+							<TextInput
+								style={styles.textinput}
+								label="Senha"
+								placeholder="Digite sua senha"
+								mode="outlined"
+								autoCapitalize="none"
+								returnKeyType="go"
+								secureTextEntry={exibirSenha}
+								onBlur={onBlur}
+								onChangeText={onChange}
+								value={value}
+								right={
+									<TextInput.Icon
+										icon="eye"
+										color={
+											exibirSenha
+												? theme.colors.onBackground
+												: theme.colors.error
+										}
+										onPress={() => setExibirSenha((previus) => !previus)}
+									/>
+								}
+							/>
+						)}
+						name="senha"
+					/>
+					{errors.senha && (
+						<Text style={{ ...styles.textError, color: theme.colors.error }}>
+							{errors.senha?.message?.toString()}
+						</Text>
+					)}
+
+					<Button
+						style={styles.button}
+						mode="contained"
+						onPress={handleSubmit(entrar)}
+					>
+						Entrar
+					</Button>
+				</>
+			</ScrollView>
 		</SafeAreaView>
 	);
 }
