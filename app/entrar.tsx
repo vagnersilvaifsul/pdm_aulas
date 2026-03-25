@@ -4,8 +4,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
+import {
+	Button,
+	Dialog,
+	Divider,
+	Text,
+	TextInput,
+	useTheme,
+} from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
 
@@ -53,16 +60,20 @@ export default function Entrar() {
 		resolver: yupResolver(schema),
 	});
 	const [exibirSenha, setExibirSenha] = useState(true);
+	const [logando, setLogando] = useState(false);
+	const [dialogVisivel, setDialogVisivel] = useState(false);
+	const [mensagemDialog, setMensagemDialog] = useState("");
 
 	async function entrar(data: Credencial) {
-		console.log(data);
-
+		setLogando(true);
 		const resposta = await signIn(data);
 		if (resposta === "ok") {
 			router.replace("/(tabs)/home");
 		} else {
-			alert(resposta);
+			setMensagemDialog(resposta);
+			setDialogVisivel(true);
 		}
+		setLogando(false);
 	}
 
 	return (
@@ -74,6 +85,10 @@ export default function Entrar() {
 				showsVerticalScrollIndicator={false}
 			>
 				<>
+					<Image
+						style={styles.image}
+						source={require("../assets/images/logo512.png")}
+					/>
 					<Controller
 						control={control}
 						render={({ field: { onChange, onBlur, value } }) => (
@@ -137,15 +152,48 @@ export default function Entrar() {
 						</Text>
 					)}
 
+					<Text
+						style={{
+							...styles.textEsqueceuSenha,
+							color: theme.colors.tertiary,
+						}}
+						variant="labelMedium"
+						onPress={() => router.push("/recuperarSenha")}
+					>
+						Esqueceu sua senha?
+					</Text>
 					<Button
 						style={styles.button}
 						mode="contained"
 						onPress={handleSubmit(entrar)}
+						loading={logando}
+						disabled={logando}
 					>
-						Entrar
+						{!logando ? "Entrar" : "Entrando"}
 					</Button>
+					<Divider />
+					<View style={styles.divCadastro}>
+						<Text variant="labelMedium">Não tem uma conta?</Text>
+						<Text
+							style={{ ...styles.textCadastro, color: theme.colors.tertiary }}
+							variant="labelMedium"
+							onPress={() => router.push("/cadastrar")}
+						>
+							{" "}
+							Cadastre-se.
+						</Text>
+					</View>
 				</>
 			</ScrollView>
+			<Dialog visible={dialogVisivel} onDismiss={() => setDialogVisivel(false)}>
+				<Dialog.Icon icon="alert-circle-outline" size={60} />
+				<Dialog.Title style={styles.textDialog}>Erro</Dialog.Title>
+				<Dialog.Content>
+					<Text style={styles.textDialog} variant="bodyLarge">
+						{mensagemDialog}
+					</Text>
+				</Dialog.Content>
+			</Dialog>
 		</SafeAreaView>
 	);
 }
@@ -154,20 +202,39 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: "center",
-		justifyContent: "center",
+	},
+	image: {
+		width: 200,
+		height: 200,
+		alignSelf: "center",
+		borderRadius: 200 / 2,
+		marginTop: 100,
+		marginBottom: 40,
 	},
 	textinput: {
-		width: "80%",
+		width: 350,
 		height: 50,
 		marginTop: 20,
 		backgroundColor: "transparent",
 	},
-	textError: {
-		width: "80%",
-	},
 	button: {
 		marginTop: 50,
 		marginBottom: 30,
-		width: "80%",
+	},
+	textDialog: {
+		textAlign: "center",
+	},
+	textError: {
+		width: 350,
+	},
+	divCadastro: {
+		marginTop: 20,
+		flexDirection: "row",
+		justifyContent: "center",
+	},
+	textCadastro: {},
+	textEsqueceuSenha: {
+		alignSelf: "flex-end",
+		marginTop: 20,
 	},
 });

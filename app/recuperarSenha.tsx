@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Cadastrar() {
 	return (
 		<SafeAreaView style={styles.container}>
-			<Text style={styles.text}>Cadastrar</Text>
+			<Text style={styles.text}>Recuperar Senha</Text>
 		</SafeAreaView>
 	);
 }
