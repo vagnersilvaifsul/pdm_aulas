@@ -1,15 +1,16 @@
 import { AuthContext } from "@/context/AuthProvider";
 import { router } from "expo-router";
 import { useContext, useEffect } from "react";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
+import { Image, StyleSheet, View } from "react-native";
+import { useTheme } from "react-native-paper";
 
 export default function Preload() {
-	const { signIn } = useContext(AuthContext);
+	const theme = useTheme();
+	const { signIn, recuperaCredencialdaCache } = useContext<any>(AuthContext);
 
 	async function logar() {
-		//const credencial = await buscaNaCache();
-		const resposta = await signIn({});
+		const credencial = await recuperaCredencialdaCache();
+		const resposta = await signIn(credencial);
 		if (resposta === "ok") {
 			router.replace("/(tabs)/home");
 		} else {
@@ -22,8 +23,26 @@ export default function Preload() {
 	}, []);
 
 	return (
-		<View>
-			<Text>Loading...</Text>
+		<View
+			style={{ ...styles.container, backgroundColor: theme.colors.background }}
+		>
+			<Image
+				style={styles.imagem}
+				source={require("../assets/images/logo512.png")}
+				accessibilityLabel="logo do app"
+			/>
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	imagem: {
+		width: 250,
+		height: 250,
+	},
+});
