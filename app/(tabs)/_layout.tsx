@@ -10,6 +10,7 @@ export default function TabsLayout() {
 		>
 			<Tabs.Screen name="home" />
 			<Tabs.Screen name="pagina2" />
+			<Tabs.Screen name="menu" />
 		</Tabs>
 	);
 }
