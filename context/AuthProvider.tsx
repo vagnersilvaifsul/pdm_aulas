@@ -1,6 +1,4 @@
 import { auth, firestore } from "@/firebase/firebaseInit";
-import { Curso } from "@/model/Curso";
-import { Perfil } from "@/model/Perfil";
 import { Credencial } from "@/model/types";
 import { Usuario } from "@/model/Usuario";
 import {
@@ -10,7 +8,7 @@ import {
 } from "@firebase/auth";
 import * as SecureStore from "expo-secure-store";
 import { doc, setDoc } from "firebase/firestore";
-import { createContext, useEffect } from "react";
+import { createContext } from "react";
 
 export const AuthContext = createContext({});
 
@@ -92,7 +90,7 @@ export const AuthProvider = ({ children }: any) => {
 						perfil: usuario.perfil,
 					};
 					await setDoc(
-						///usuarios/sbwNx8XfPnRolTdzX8MEweKJ3ai2
+						// /usuarios/sbwNx8XfPnPTGlTdzX8MEweKJ3ai2
 						doc(firestore, "usuarios", userCredencial.user.uid),
 						usuarioFirestore,
 						{ merge: true },
@@ -128,7 +126,9 @@ export const AuthProvider = ({ children }: any) => {
 	}
 
 	return (
-		<AuthContext.Provider value={{ signIn, recuperaCredencialdaCache, sair, cadastrar }}>
+		<AuthContext.Provider
+			value={{ signIn, recuperaCredencialdaCache, sair, cadastrar }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);
