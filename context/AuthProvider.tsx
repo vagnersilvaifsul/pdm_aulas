@@ -1,14 +1,20 @@
-import { auth } from "@/firebase/firebaseInit";
+import { auth, firestore } from "@/firebase/firebaseInit";
+import { Curso } from "@/model/Curso";
+import { Perfil } from "@/model/Perfil";
 import { Credencial } from "@/model/types";
-import { signInWithEmailAndPassword } from "@firebase/auth";
+import { Usuario } from "@/model/Usuario";
+import {
+	createUserWithEmailAndPassword,
+	sendEmailVerification,
+	signInWithEmailAndPassword,
+} from "@firebase/auth";
 import * as SecureStore from "expo-secure-store";
-import { createContext, useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { createContext, useEffect } from "react";
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }: any) => {
-	const [userFirebase, setUserFirebase] = useState<any>(null);
-
 	/*
 		Cache criptografado do app
 	*/
@@ -49,9 +55,53 @@ export const AuthProvider = ({ children }: any) => {
 				credencial.email,
 				credencial.senha,
 			);
-			setUserFirebase(userCredencial.user);
 			armazenaCredencialnaCache(credencial);
 			return "ok";
+		} catch (error) {
+			return launchServerMessageErro(error);
+		}
+	}
+
+	async function sair(): Promise<string> {
+		try {
+			await auth.signOut();
+			await SecureStore.deleteItemAsync("credencial");
+			return "ok";
+		} catch (error) {
+			console.error("Erro ao sair: ", error);
+			return "Erro ao sair. Tente novamente.";
+		}
+	}
+
+	async function cadastrar(usuario: Usuario): Promise<string> {
+		try {
+			if (usuario.email && usuario.senha) {
+				const userCredencial = await createUserWithEmailAndPassword(
+					auth,
+					usuario.email,
+					usuario.senha,
+				);
+				if (userCredencial) {
+					await sendEmailVerification(userCredencial.user);
+					let usuarioFirestore = {
+						uid: userCredencial.user.uid,
+						email: usuario.email,
+						nome: usuario.nome,
+						urlFoto: usuario.urlFoto,
+						curso: usuario.curso,
+						perfil: usuario.perfil,
+					};
+					await setDoc(
+						///usuarios/sbwNx8XfPnRolTdzX8MEweKJ3ai2
+						doc(firestore, "usuarios", userCredencial.user.uid),
+						usuarioFirestore,
+						{ merge: true },
+					);
+				}
+				return "ok";
+			} else {
+				return "Os campos email e senha são obrigatórios.";
+			}
 		} catch (error) {
 			return launchServerMessageErro(error);
 		}
@@ -78,7 +128,7 @@ export const AuthProvider = ({ children }: any) => {
 	}
 
 	return (
-		<AuthContext.Provider value={{ signIn, recuperaCredencialdaCache }}>
+		<AuthContext.Provider value={{ signIn, recuperaCredencialdaCache, sair, cadastrar }}>
 			{children}
 		</AuthContext.Provider>
 	);

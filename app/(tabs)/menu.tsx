@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { AuthContext } from "@/context/AuthProvider";
+import { router } from "expo-router";
 import React, { useContext, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Dialog, Divider, List, Text, useTheme } from "react-native-paper";
@@ -10,12 +11,11 @@ export default function Menu() {
 	const [dialogVisivel, setDialogVisivel] = useState(false);
 
 	async function handleSair() {
-		// if (await sair()) {
-		// 	router.replace("/entrar"); //Veja a branch modulo1_preload para ver como isso está funcionando
-		// } else {
-		// 	setDialogVisivel(true);
-		// }
-		alert("em desenvolvimento");
+		if ((await sair()) === "ok") {
+			router.replace("/entrar"); //Veja a branch modulo1_preload para ver como isso está funcionando
+		} else {
+			setDialogVisivel(true);
+		}
 	}
 
 	return (
