@@ -1,6 +1,9 @@
 import { AuthContext } from "@/context/AuthProvider";
+import { Curso } from "@/model/Curso";
+import { Perfil } from "@/model/Perfil";
 import { Usuario } from "@/model/Usuario";
 import { yupResolver } from "@hookform/resolvers/yup";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -60,15 +63,46 @@ export default function Cadastrar() {
 	const [urlDevice, setUrlDevice] = useState<string | undefined>("");
 
 	async function cadastrar(data: Usuario) {
-		alert("Em desenvolvimento");
+		setRequisitando(true);
+		data.curso = Curso.CSTSI;
+		data.perfil = Perfil.Aluno;
+		const msg = await signUp(data, urlDevice);
+		if (msg === "ok") {
+			setMensagem({
+				tipo: "ok",
+				mensagem: `Show! Você foi cadastrado com sucesso. Verifique seu email para validar sua conta.\n${data.email}`,
+			});
+			setDialogVisivel(true);
+			setRequisitando(false);
+		} else {
+			setMensagem({ tipo: "erro", mensagem: msg });
+			setDialogVisivel(true);
+			setRequisitando(false);
+		}
 	}
 
 	async function buscaNaGaleria() {
-		alert("buscaNaGaleria Em desenvolvimento");
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+		if (!result.canceled) {
+			setUrlDevice(result.assets[0].uri);
+		}
 	}
 
 	async function tiraFoto() {
-		alert("tiraFoto Em desenvolvimento");
+		let result = await ImagePicker.launchCameraAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+		if (!result.canceled) {
+			setUrlDevice(result.assets[0].uri);
+		}
 	}
 
 	return (

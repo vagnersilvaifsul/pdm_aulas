@@ -28,7 +28,7 @@ export default function RootLayout() {
 		<PaperProvider theme={colorScheme === "dark" ? themeDark : themeLight}>
 			<AuthProvider>
 				<Stack
-					initialRouteName="index"
+					initialRouteName="entrar"
 					screenOptions={{
 						headerShown: false,
 					}}
