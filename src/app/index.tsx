@@ -1,27 +1,26 @@
 import { useState } from "react";
 import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
 
+export function MyBotao(props: { texto: string }) {
+	return (
+		<TouchableHighlight
+			style={styles.botao}
+			onPress={() => alert("Botão pressionado!")}
+		>
+			<Text>{props.texto}</Text>
+		</TouchableHighlight>
+	);
+}
+
 export default function Index() {
 	//state - é uma variável que pode ser alterada, e quando ela é alterada, o componente é re-renderizado
 	const [cont, setCont] = useState<number>(0);
 	return (
 		<View style={styles.container}>
 			<Text style={styles.texto}>Contador= {cont}</Text>
-			<TouchableHighlight
-				style={styles.botao}
-				onPress={() => setCont(cont + 1)}
-			>
-				<Text>Incrementar</Text>
-			</TouchableHighlight>
-			<TouchableHighlight
-				style={styles.botao}
-				onPress={() => setCont(cont - 1)}
-			>
-				<Text>Decrementar</Text>
-			</TouchableHighlight>
-			<TouchableHighlight style={styles.botao} onPress={() => setCont(0)}>
-				<Text>Resetar</Text>
-			</TouchableHighlight>
+			<MyBotao texto="Incrementar" />
+			<MyBotao texto="Decrementar" />
+			<MyBotao texto="Resetar" />
 		</View>
 	);
 }
