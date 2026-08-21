@@ -1,10 +1,26 @@
 import { MyBotao } from "@/components/MyBotao";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
 	//state - é uma variável que pode ser alterada, e quando ela é alterada, o componente é re-renderizado
 	const [cont, setCont] = useState<number>(0);
+
+	useEffect(() => {
+		console.log("Montou o componente");
+
+		return () => {
+			console.log("Desmontou o componente");
+		};
+	}, []);
+
+	useEffect(() => {
+		console.log("Atualizou o componente");
+	});
+
+	useEffect(() => {
+		console.log("Atualizou o componente baseado no cont", cont);
+	}, [cont]);
 
 	function incrementar() {
 		setCont(cont + 1);
