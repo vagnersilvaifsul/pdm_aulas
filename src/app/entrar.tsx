@@ -1,6 +1,7 @@
+import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-export default function Index() {
+export default function Entrar() {
 	return (
 		<View style={styles.container}>
 			<TextInput
@@ -30,7 +31,7 @@ export default function Index() {
 			<Button
 				style={styles.button}
 				mode="contained"
-				onPress={() => console.log("Entrar")}
+				onPress={() => router.replace("/(tabs)/home")}
 			>
 				Entrar
 			</Button>
