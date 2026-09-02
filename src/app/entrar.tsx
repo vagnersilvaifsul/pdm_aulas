@@ -1,17 +1,63 @@
 import { AuthContext } from "@/context/AuthProvider";
+import { Credencial } from "@/model/types";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Button, Dialog, Text, TextInput } from "react-native-paper";
+import { Controller, useForm } from "react-hook-form";
+import { StyleSheet } from "react-native";
+import { Button, Dialog, Text, TextInput, useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import * as yup from "yup";
+
+const requiredMessage = "Campo obrigatório";
+
+/*
+  /^
+  (?=.*\d)              // deve conter ao menos um dígito
+  (?=.*[a-z])           // deve conter ao menos uma letra minúscula
+  (?=.*[A-Z])           // deve conter ao menos uma letra maiúscula
+  (?=.*[$*&@#])         // deve conter ao menos um caractere especial
+  [0-9a-zA-Z$*&@#]{8,}  // deve conter ao menos 8 dos caracteres mencionados
+$/
+*/
+const schema = yup
+	.object()
+	.shape({
+		email: yup
+			.string()
+			.required(requiredMessage)
+			.matches(/\S+@\S+\.\S+/, "Email inválido"),
+		senha: yup
+			.string()
+			.required(requiredMessage)
+			.matches(
+				/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/,
+				"A senha deve conter ao menos uma letra maiúscula, uma letra minúscula, um númeral, um caractere especial e um total de 8 caracteres",
+			),
+	})
+	.required();
+
 export default function Entrar() {
+	const theme = useTheme<any>();
 	const { signIn } = useContext<any>(AuthContext);
-	const [email, setEmail] = useState<string>("");
-	const [senha, setSenha] = useState<string>("");
 	const [dialogVisivel, setDialogVisivel] = useState(false);
 	const [mensagemDialog, setMensagemDialog] = useState("");
+	const {
+		control,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<any>({
+		defaultValues: {
+			email: "",
+			senha: "",
+		},
+		mode: "onSubmit",
+		resolver: yupResolver(schema),
+	});
+	const [exibirSenha, setExibirSenha] = useState(true);
 
-	async function handleSignIn(): Promise<void> {
-		const result = await signIn(email, senha);
+	async function entrar(data: Credencial): Promise<void> {
+		const result = await signIn(data.email, data.senha);
 		if (result === "ok") {
 			router.replace("/(tabs)/home");
 		} else {
@@ -20,34 +66,71 @@ export default function Entrar() {
 		}
 	}
 	return (
-		<View style={styles.container}>
-			<TextInput
-				style={styles.textinput}
-				label="Email"
-				placeholder="Digite seu email"
-				mode="outlined"
-				autoCapitalize="none"
-				returnKeyType="next"
-				keyboardType="email-address"
-				onChangeText={(text) => {
-					setEmail(text);
-					console.log(text);
-				}}
+		<SafeAreaView style={styles.container}>
+			<Controller
+				control={control}
+				render={({ field: { onChange, onBlur, value } }) => (
+					<TextInput
+						style={styles.textinput}
+						label="Email"
+						placeholder="Digite seu email"
+						mode="outlined"
+						autoCapitalize="none"
+						returnKeyType="next"
+						keyboardType="email-address"
+						onBlur={onBlur}
+						onChangeText={onChange}
+						value={value}
+						right={<TextInput.Icon icon="email" />}
+					/>
+				)}
+				name="email"
 			/>
-			<TextInput
-				style={styles.textinput}
-				label="Senha"
-				placeholder="Digite sua senha"
-				mode="outlined"
-				autoCapitalize="none"
-				returnKeyType="go"
-				secureTextEntry
-				onChangeText={(text) => {
-					setSenha(text);
-					console.log(text);
+			{errors.email && (
+				<Text style={{ ...styles.textError, color: theme.colors.error }}>
+					{errors.email?.message?.toString()}
+				</Text>
+			)}
+			<Controller
+				control={control}
+				rules={{
+					required: true,
 				}}
+				render={({ field: { onChange, onBlur, value } }) => (
+					<TextInput
+						style={styles.textinput}
+						label="Senha"
+						placeholder="Digite sua senha"
+						mode="outlined"
+						autoCapitalize="none"
+						returnKeyType="go"
+						secureTextEntry={exibirSenha}
+						onBlur={onBlur}
+						onChangeText={onChange}
+						value={value}
+						right={
+							<TextInput.Icon
+								icon="eye"
+								color={
+									exibirSenha ? theme.colors.onBackground : theme.colors.error
+								}
+								onPress={() => setExibirSenha((previus) => !previus)}
+							/>
+						}
+					/>
+				)}
+				name="senha"
 			/>
-			<Button style={styles.button} mode="contained" onPress={handleSignIn}>
+			{errors.senha && (
+				<Text style={{ ...styles.textError, color: theme.colors.error }}>
+					{errors.senha?.message?.toString()}
+				</Text>
+			)}
+			<Button
+				style={styles.button}
+				mode="contained"
+				onPress={handleSubmit(entrar)}
+			>
 				Entrar
 			</Button>
 			<Dialog visible={dialogVisivel} onDismiss={() => setDialogVisivel(false)}>
@@ -59,7 +142,7 @@ export default function Entrar() {
 					</Text>
 				</Dialog.Content>
 			</Dialog>
-		</View>
+		</SafeAreaView>
 	);
 }
 
@@ -81,5 +164,8 @@ const styles = StyleSheet.create({
 	},
 	textDialog: {
 		textAlign: "center",
+	},
+	textError: {
+		width: 350,
 	},
 });
