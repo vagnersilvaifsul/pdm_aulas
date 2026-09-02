@@ -6,7 +6,7 @@ export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }: any) => {
 	useEffect(() => {
-		//signIn("teste@email.com", "Teste12");
+		//signIn("teste@email.com", "Teste123");
 	}, []);
 
 	async function signIn(email: string, senha: string): Promise<string> {
