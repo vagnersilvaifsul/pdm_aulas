@@ -57,7 +57,7 @@ export default function Entrar() {
 	const [exibirSenha, setExibirSenha] = useState(true);
 
 	async function entrar(data: Credencial): Promise<void> {
-		const result = await signIn(data.email, data.senha);
+		const result = await signIn(data);
 		if (result === "ok") {
 			router.replace("/(tabs)/home");
 		} else {

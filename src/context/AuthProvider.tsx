@@ -1,4 +1,6 @@
 import { auth } from "@/firebase/firebaseInit";
+import { Credencial } from "@/model/types";
+import * as SecureStore from "expo-secure-store";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { createContext, useEffect } from "react";
 
@@ -9,9 +11,23 @@ export const AuthProvider = ({ children }: any) => {
 		//signIn("teste@email.com", "Teste123");
 	}, []);
 
-	async function signIn(email: string, senha: string): Promise<string> {
+	async function recuperarCredencialdaCache(): Promise<Credencial | null> {
+		const credencialString = await SecureStore.getItemAsync("credencial");
+		if (credencialString) {
+			return JSON.parse(credencialString);
+		}
+		return null;
+	}
+
+	async function signIn(credencial: Credencial): Promise<string> {
 		try {
-			await signInWithEmailAndPassword(auth, email, senha);
+			await signInWithEmailAndPassword(
+				auth,
+				credencial.email,
+				credencial.senha,
+			);
+			//cachear a Credencial do usuário no localStorage (ou SecureStore)
+			await SecureStore.setItemAsync("credencial", JSON.stringify(credencial));
 			return "ok";
 		} catch (e: any) {
 			return launchServerMessageErro(e);
@@ -39,6 +55,8 @@ export const AuthProvider = ({ children }: any) => {
 	}
 
 	return (
-		<AuthContext.Provider value={{ signIn }}>{children}</AuthContext.Provider>
+		<AuthContext.Provider value={{ signIn, recuperarCredencialdaCache }}>
+			{children}
+		</AuthContext.Provider>
 	);
 };
