@@ -1,6 +1,4 @@
 import { auth, db } from "@/firebase/firebaseInit";
-import { Curso } from "@/model/Curso";
-import { Perfil } from "@/model/Perfil";
 import { Credencial } from "@/model/types";
 import { Usuario } from "@/model/Usuario";
 import * as SecureStore from "expo-secure-store";
@@ -17,16 +15,16 @@ export const AuthContext = createContext({});
 export const AuthProvider = ({ children }: any) => {
 	useEffect(() => {
 		//signIn("teste@email.com", "Teste123");
-		signUp({
-			email: "vagnersilva@ifsul.edu.br",
-			senha: "Teste12@",
-			nome: "Vagner Silva",
-			urlFoto:
-				"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-			curso: Curso.CSTSI,
-			perfil: Perfil.Aluno,
-			uid: "",
-		});
+		// signUp({
+		// 	email: "vagnersilva@ifsul.edu.br",
+		// 	senha: "Teste12@",
+		// 	nome: "Vagner Silva",
+		// 	urlFoto:
+		// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+		// 	curso: Curso.CSTSI,
+		// 	perfil: Perfil.Aluno,
+		// 	uid: "",
+		// });
 	}, []);
 
 	async function recuperarCredencialdaCache(): Promise<Credencial | null> {
@@ -105,7 +103,9 @@ export const AuthProvider = ({ children }: any) => {
 	}
 
 	return (
-		<AuthContext.Provider value={{ signIn, recuperarCredencialdaCache }}>
+		<AuthContext.Provider
+			value={{ signIn, recuperarCredencialdaCache, signUp }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

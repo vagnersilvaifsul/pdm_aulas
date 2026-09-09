@@ -1,9 +1,10 @@
+import { AuthContext } from "@/context/AuthProvider";
 import { Curso } from "@/model/Curso";
 import { Perfil } from "@/model/Perfil";
 import { Usuario } from "@/model/Usuario";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Dialog, Text, TextInput, useTheme } from "react-native-paper";
@@ -53,7 +54,7 @@ export default function SignUpScreen() {
 		mode: "onSubmit",
 		resolver: yupResolver(schema),
 	});
-	// const { signUp } = useContext(AuthContext);
+	const { signUp } = useContext<any>(AuthContext);
 	const [exibirSenha, setExibirSenha] = useState(true);
 	const [requisitando, setRequisitando] = useState(false);
 	const [dialogVisivel, setDialogVisivel] = useState(false);
@@ -65,19 +66,19 @@ export default function SignUpScreen() {
 			"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
 		data.curso = Curso.CSTSI;
 		data.perfil = Perfil.Aluno;
-		// const msg = await signUp(data);
-		// if (msg === "ok") {
-		// 	setMensagem({
-		// 		tipo: "ok",
-		// 		mensagem: `Show! Você foi cadastrado com sucesso. Verifique seu email para validar sua conta.\n${data.email}`,
-		// 	});
-		// 	setDialogVisivel(true);
-		// 	setRequisitando(false);
-		// } else {
-		// 	setMensagem({ tipo: "erro", mensagem: msg });
-		// 	setDialogVisivel(true);
-		// 	setRequisitando(false);
-		// }
+		const msg = await signUp(data);
+		if (msg === "ok") {
+			setMensagem({
+				tipo: "ok",
+				mensagem: `Show! Você foi cadastrado com sucesso. Verifique seu email para validar sua conta.\n${data.email}`,
+			});
+			setDialogVisivel(true);
+			setRequisitando(false);
+		} else {
+			setMensagem({ tipo: "erro", mensagem: msg });
+			setDialogVisivel(true);
+			setRequisitando(false);
+		}
 	}
 
 	return (
