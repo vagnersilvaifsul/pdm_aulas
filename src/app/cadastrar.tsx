@@ -3,6 +3,7 @@ import { Curso } from "@/model/Curso";
 import { Perfil } from "@/model/Perfil";
 import { Usuario } from "@/model/Usuario";
 import { yupResolver } from "@hookform/resolvers/yup";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -59,6 +60,7 @@ export default function SignUpScreen() {
 	const [requisitando, setRequisitando] = useState(false);
 	const [dialogVisivel, setDialogVisivel] = useState(false);
 	const [mensagem, setMensagem] = useState({ tipo: "", mensagem: "" });
+	const [urlDevice, setUrlDevice] = useState<string | undefined>("");
 
 	async function cadastrar(data: Usuario) {
 		setRequisitando(true);
@@ -81,6 +83,24 @@ export default function SignUpScreen() {
 		}
 	}
 
+	async function buscaNaGaleria() {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		if (!result.canceled) {
+			const path = result.assets[0].uri;
+			setUrlDevice(path); //armazena a uri para a imagem no device
+		}
+	}
+
+	async function tirarFoto() {
+		Alert.alert("Atenção", "Função ainda não implementada");
+	}
+
 	return (
 		<SafeAreaView
 			style={{ ...styles.container, backgroundColor: theme.colors.background }}
@@ -96,7 +116,7 @@ export default function SignUpScreen() {
 							style={styles.buttonImage}
 							mode="outlined"
 							icon="image"
-							onPress={() => Alert.alert("Vamos ver isso em upload de imagens")}
+							onPress={buscaNaGaleria}
 						>
 							Galeria
 						</Button>
@@ -104,7 +124,7 @@ export default function SignUpScreen() {
 							style={styles.buttonImage}
 							mode="outlined"
 							icon="camera"
-							onPress={() => Alert.alert("Vamos ver isso em upload de imagens")}
+							onPress={tirarFoto}
 						>
 							Foto
 						</Button>
