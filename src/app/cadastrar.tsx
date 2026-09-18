@@ -7,7 +7,7 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Dialog, Text, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
@@ -68,7 +68,7 @@ export default function SignUpScreen() {
 			"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
 		data.curso = Curso.CSTSI;
 		data.perfil = Perfil.Aluno;
-		const msg = await signUp(data);
+		const msg = await signUp(data, urlDevice);
 		if (msg === "ok") {
 			setMensagem({
 				tipo: "ok",
@@ -92,13 +92,25 @@ export default function SignUpScreen() {
 		});
 
 		if (!result.canceled) {
+			console.log(result.assets[0].uri);
 			const path = result.assets[0].uri;
 			setUrlDevice(path); //armazena a uri para a imagem no device
 		}
 	}
 
 	async function tirarFoto() {
-		Alert.alert("Atenção", "Função ainda não implementada");
+		const result = await ImagePicker.launchCameraAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		if (!result.canceled) {
+			console.log(result.assets[0].uri);
+			const path = result.assets[0].uri;
+			setUrlDevice(path); //armazena a uri para a imagem no device
+		}
 	}
 
 	return (
@@ -109,7 +121,11 @@ export default function SignUpScreen() {
 				<>
 					<Image
 						style={styles.image}
-						source={require("../../assets/images/logo512.png")}
+						source={
+							urlDevice !== ""
+								? { uri: urlDevice }
+								: require("../../assets/images/person.png")
+						}
 					/>
 					<View style={styles.divButtonsImage}>
 						<Button
