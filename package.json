@@ -12,6 +12,7 @@
     "expo-font": "~57.0.1",
     "expo-glass-effect": "~57.0.1",
     "expo-image": "~57.0.2",
+    "expo-image-manipulator": "~57.0.19",
     "expo-image-picker": "~57.0.18",
     "expo-linking": "~57.0.5",
     "expo-router": "~57.0.12",

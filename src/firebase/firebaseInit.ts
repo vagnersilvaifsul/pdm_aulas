@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import { firebaseConfig } from "./firebaseConfig";
 
 
@@ -12,3 +13,6 @@ export const auth = getAuth(app);
 
 //Inicializa o serviço de banco de dados do Firestore
 export const db = getFirestore(app);
+
+//Inicializa o serviço de armazenamento do Firebase
+export const storage = getStorage(app);

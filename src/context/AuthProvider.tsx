@@ -1,6 +1,7 @@
-import { auth, db } from "@/firebase/firebaseInit";
+import { auth, db, storage } from "@/firebase/firebaseInit";
 import { Credencial } from "@/model/types";
 import { Usuario } from "@/model/Usuario";
+import * as ImageManipulator from "expo-image-manipulator";
 import * as SecureStore from "expo-secure-store";
 import {
 	createUserWithEmailAndPassword,
@@ -8,6 +9,7 @@ import {
 	signInWithEmailAndPassword,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { createContext, useEffect } from "react";
 
 export const AuthContext = createContext({});
@@ -35,7 +37,7 @@ export const AuthProvider = ({ children }: any) => {
 		return null;
 	}
 
-	async function signUp(usuario: Usuario): Promise<string> {
+	async function signUp(usuario: Usuario, urlDevice: string): Promise<string> {
 		try {
 			if (usuario.email && usuario.senha) {
 				const userCredential = await createUserWithEmailAndPassword(
@@ -45,6 +47,16 @@ export const AuthProvider = ({ children }: any) => {
 				);
 				if (userCredential) {
 					await sendEmailVerification(userCredential.user);
+					if (urlDevice !== "") {
+						const urlStorage = await sendImageToStorage(
+							urlDevice,
+							userCredential.user.uid,
+						);
+						if (!urlStorage) {
+							return "Erro ao cadastrar o usuário. Contate o suporte."; //não deixa salvar ou atualizar se não realizar todos os passos para enviar a imagem para o storage
+						}
+						usuario.urlFoto = urlStorage;
+					}
 				}
 				const usuarioFirebase = {
 					email: usuario.email,
@@ -79,6 +91,43 @@ export const AuthProvider = ({ children }: any) => {
 			return "ok";
 		} catch (e: any) {
 			return launchServerMessageErro(e);
+		}
+	}
+
+	//função utilitária
+	async function sendImageToStorage(
+		urlDevice: string,
+		uid: string,
+	): Promise<string | null> {
+		try {
+			//1. Redimensiona, compacta a imagem, e a transforma em blob
+			const context = ImageManipulator.ImageManipulator.manipulate(urlDevice);
+
+			context.resize({ width: 150, height: 150 });
+
+			const imageRef = await context.renderAsync();
+			const imageRedimencionada = await imageRef.saveAsync({
+				compress: 0.8,
+				format: ImageManipulator.SaveFormat.PNG,
+			});
+
+			const data = await fetch(imageRedimencionada?.uri);
+			const blob = await data.blob();
+
+			//2. e prepara o path onde ela deve ser salva no storage
+			const storageReference = ref(storage, `imagens/usuarios/${uid}/foto.png`);
+
+			//3. Envia para o storage
+			await uploadBytes(storageReference, blob);
+
+			//4. Retorna a URL da imagem
+			const url = await getDownloadURL(
+				ref(storage, `imagens/usuarios/${uid}/foto.png`),
+			);
+			return url;
+		} catch (e) {
+			console.error(e);
+			return null;
 		}
 	}
 
