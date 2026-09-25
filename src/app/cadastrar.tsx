@@ -92,7 +92,6 @@ export default function SignUpScreen() {
 		});
 
 		if (!result.canceled) {
-			console.log(result.assets[0].uri);
 			const path = result.assets[0].uri;
 			setUrlDevice(path); //armazena a uri para a imagem no device
 		}
@@ -107,7 +106,6 @@ export default function SignUpScreen() {
 		});
 
 		if (!result.canceled) {
-			console.log(result.assets[0].uri);
 			const path = result.assets[0].uri;
 			setUrlDevice(path); //armazena a uri para a imagem no device
 		}

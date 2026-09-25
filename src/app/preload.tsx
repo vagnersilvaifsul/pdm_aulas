@@ -15,7 +15,6 @@ export default function Preload() {
 
 	async function entrar(): Promise<void> {
 		const credencial = await recuperarCredencialdaCache();
-		console.log("credencial recuperada do cache: ", credencial);
 		if (credencial) {
 			const result = await signIn(credencial);
 			if (result === "ok") {
