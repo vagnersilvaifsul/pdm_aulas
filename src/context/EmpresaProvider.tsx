@@ -3,9 +3,11 @@ import { Empresa } from "@/model/Empresa";
 import {
 	addDoc,
 	collection,
+	doc,
 	onSnapshot,
 	orderBy,
 	query,
+	setDoc,
 } from "firebase/firestore";
 import { createContext, useEffect, useState } from "react";
 
@@ -14,6 +16,7 @@ export const EmpresaContext = createContext({});
 export const EmpresaProvider = ({ children }: any) => {
 	const [empresas, setEmpresas] = useState<Empresa[]>([]);
 	useEffect(() => {
+		//select (ou get)
 		const q = query(collection(db, "empresas"), orderBy("nome"));
 		const unsubscribe = onSnapshot(q, (querySnapshot) => {
 			if (querySnapshot) {
@@ -30,27 +33,46 @@ export const EmpresaProvider = ({ children }: any) => {
 						urlFoto: doc.data().urlFoto,
 					});
 				});
-				console.log("empresas: ", data);
 				setEmpresas(data);
 			}
 		});
-		return () => unsubscribe();
 		// let empresa: Empresa = {
-		// 	nome: "teste",
+		// 	nome: "teste2",
 		// 	tecnologias: "react, react-native",
-		// 	endereco: "Rua Teste",
+		// 	endereco: "Rua Teste2",
 		// 	latitude: -31.766453286495448,
 		// 	longitude: -52.351914793252945,
 		// 	urlFoto:
 		// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
 		// } as Empresa;
 		// save(empresa);
+
+		// let empresa: Empresa = {
+		// 	uid: "5WCirUvAD9iGykXFFQQS",
+		// 	nome: "teste2",
+		// 	tecnologias: "react, react-native",
+		// 	endereco: "Rua Teste2",
+		// 	latitude: -31.766453286495448,
+		// 	longitude: -52.351914793252945,
+		// 	urlFoto:
+		// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+		// } as Empresa;
+		// save(empresa);
+		return () => unsubscribe();
 	}, []);
 
 	//save (insert ou update)
 	async function save(empresa: Empresa): Promise<string> {
 		try {
-			await addDoc(collection(db, "empresas"), empresa); //insert
+			const uid = empresa.uid;
+			delete empresa.uid; //evita que a uid seja salva no banco
+			if (uid) {
+				await setDoc(doc(db, "empresas", uid), empresa, {
+					merge: true,
+				}); //update
+			} else {
+				await addDoc(collection(db, "empresas"), empresa); //insert
+			}
 			return "ok";
 		} catch (error) {
 			console.error("Error em save: ", error);
