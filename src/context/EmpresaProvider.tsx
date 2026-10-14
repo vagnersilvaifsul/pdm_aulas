@@ -3,6 +3,7 @@ import { Empresa } from "@/model/Empresa";
 import {
 	addDoc,
 	collection,
+	deleteDoc,
 	doc,
 	onSnapshot,
 	orderBy,
@@ -58,6 +59,7 @@ export const EmpresaProvider = ({ children }: any) => {
 		// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
 		// } as Empresa;
 		// save(empresa);
+		// del("5WCirUvAD9iGykXFFQQS");
 		return () => unsubscribe();
 	}, []);
 
@@ -80,8 +82,18 @@ export const EmpresaProvider = ({ children }: any) => {
 		}
 	}
 
+	async function del(uid: string): Promise<string> {
+		try {
+			await deleteDoc(doc(db, "empresas", uid));
+			return "ok";
+		} catch (error) {
+			console.error("Error em del: ", error);
+			return "Erro, contate o administrador.";
+		}
+	}
+
 	return (
-		<EmpresaContext.Provider value={{ save, empresas }}>
+		<EmpresaContext.Provider value={{ save, empresas, del }}>
 			{children}
 		</EmpresaContext.Provider>
 	);
