@@ -22,10 +22,23 @@ export default function TabsLayout() {
 			<Tabs.Screen
 				name="home"
 				options={{
-					title: "Home",
+					title: "Estudantes",
 					tabBarIcon: ({ color }) => (
 						<Icon
 							source="account-group"
+							color={theme.colors.primary}
+							size={20}
+						/>
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="empresas"
+				options={{
+					title: "Empresas",
+					tabBarIcon: ({ color }) => (
+						<Icon
+							source="office-building-outline"
 							color={theme.colors.primary}
 							size={20}
 						/>
