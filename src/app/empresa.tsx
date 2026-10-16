@@ -1,4 +1,5 @@
 import { EmpresaContext } from "@/context/EmpresaProvider";
+import { Empresa } from "@/model/Empresa";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { router, useLocalSearchParams } from "expo-router";
 import { useContext, useState } from "react";
@@ -35,7 +36,7 @@ const schema = yup.object().shape({
 		.min(2, "Digite um endereço válido"),
 });
 
-export default function Empresa() {
+export default function EmpresaDetalhe() {
 	const { empresa } = useLocalSearchParams();
 	const theme = useTheme();
 	const [requisitando, setRequisitando] = useState(false);
@@ -73,8 +74,40 @@ export default function Empresa() {
 		alert("Função de busca de endereço ainda não implementada");
 	}
 
-	function salvar(data: any): void {
-		alert("Função de salvar ainda não implementada");
+	async function salvar(value: Empresa): Promise<void> {
+		value.uid = JSON.parse(empresa.toString())?.uid || null;
+		value.urlFoto =
+			JSON.parse(empresa.toString())?.urlFoto ||
+			"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
+		// const coordenadas = await buscarCoordenadas(value.endereco);
+		// if (!coordenadas) {
+		// 	setMensagem({
+		// 		tipo: "erro",
+		// 		mensagem:
+		// 			"Ops! Não foi possível identificaar coordenadas geográficas para este endereço. Por favor, verifique se o endereço está correto.",
+		// 	});
+		// 	setDialogErroVisivel(true);
+		// 	return;
+		// }
+		// value.latitude = coordenadas.latitude;
+		// value.longitude = coordenadas.longitude;
+		setRequisitando(true);
+		setAtualizando(true);
+		const msg = await save(value, urlDevice);
+		if (msg === "ok") {
+			setMensagem({
+				tipo: "ok",
+				mensagem: "Show! Operação realizada com sucesso.",
+			});
+			setDialogErroVisivel(true);
+			setRequisitando(false);
+			setAtualizando(false);
+		} else {
+			setMensagem({ tipo: "erro", mensagem: msg });
+			setDialogErroVisivel(true);
+			setRequisitando(false);
+			setAtualizando(false);
+		}
 	}
 
 	function avisarDaExclusaoPermanenteDoRegistro(): void {
