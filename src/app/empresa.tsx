@@ -110,12 +110,29 @@ export default function EmpresaDetalhe() {
 		}
 	}
 
-	function avisarDaExclusaoPermanenteDoRegistro(): void {
-		alert("Função de aviso de exclusão ainda não implementada");
+	async function excluirEmpresa(): Promise<void> {
+		setDialogExcluirVisivel(false);
+		setRequisitando(true);
+		setExcluindo(true);
+		const msg = await del(JSON.parse(empresa.toString()).uid);
+		if (msg === "ok") {
+			setDialogErroVisivel(true);
+			setRequisitando(false);
+			setAtualizando(false);
+			setMensagem({
+				tipo: "ok",
+				mensagem: "A empresa foi excluída com sucesso.",
+			});
+		} else {
+			setMensagem({ tipo: "erro", mensagem: "ops! algo deu errado" });
+			setDialogErroVisivel(true);
+			setRequisitando(false);
+			setExcluindo(false);
+		}
 	}
 
-	function excluirEmpresa(): void {
-		alert("Função de exclusão ainda não implementada");
+	function avisarDaExclusaoPermanenteDoRegistro() {
+		setDialogExcluirVisivel(true);
 	}
 
 	return (
