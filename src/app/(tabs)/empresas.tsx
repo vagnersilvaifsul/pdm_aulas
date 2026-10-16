@@ -1,15 +1,29 @@
 import { EmpresaContext } from "@/context/EmpresaProvider";
 import { Empresa } from "@/model/Empresa";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Avatar, Card, List, useTheme } from "react-native-paper";
+import { Avatar, Card, List, Searchbar, useTheme } from "react-native-paper";
 
 export default function Empresas() {
-	const { empresas } = useContext<any>(EmpresaContext);
+	const { empresas, getEmpresasByName } = useContext<any>(EmpresaContext);
+	const [empresasSearch, setEmpresasSearch] = useState<Empresa[]>([]);
+	const [searchQuery, setSearchQuery] = useState<string>("");
 	const theme = useTheme();
 
 	function irParaTelaEmpresa(empresa: any) {
 		alert(`Empresa selecionada: ${empresa.nome}`);
+	}
+
+	async function SearchQuery(): Promise<void> {
+		const result = await getEmpresasByName(searchQuery);
+		if (result.length > 0) {
+			setEmpresasSearch(result);
+		}
+	}
+
+	function clearSearch() {
+		setSearchQuery("");
+		setEmpresasSearch([]);
 	}
 
 	return (
@@ -20,25 +34,60 @@ export default function Empresas() {
 				<List.Subheader style={styles.subhearder}>
 					Lista de Empresas
 				</List.Subheader>
+				<Searchbar
+					style={{
+						...styles.searchBar,
+						backgroundColor: theme.colors.background,
+					}}
+					onChangeText={(query) => setSearchQuery(query)}
+					onSubmitEditing={SearchQuery}
+					onClearIconPress={clearSearch}
+					value={searchQuery}
+				/>
 				<ScrollView>
-					{empresas.map((empresa: Empresa, key: number) => (
-						<Card
-							key={key}
-							style={{
-								...styles.card,
-								borderColor: theme.colors.secondary,
-							}}
-							onPress={() => irParaTelaEmpresa(empresa)}
-						>
-							<Card.Title
-								title={empresa.nome}
-								subtitle={empresa.tecnologias}
-								left={() => (
-									<Avatar.Image size={40} source={{ uri: empresa.urlFoto }} />
-								)}
-							/>
-						</Card>
-					))}
+					{empresasSearch.length > 0
+						? empresasSearch.map((empresa: Empresa, key: number) => (
+								<Card
+									key={key}
+									style={{
+										...styles.card,
+										borderColor: theme.colors.secondary,
+									}}
+									onPress={() => irParaTelaEmpresa(empresa)}
+								>
+									<Card.Title
+										title={empresa.nome}
+										subtitle={empresa.tecnologias}
+										left={() => (
+											<Avatar.Image
+												size={40}
+												source={{ uri: empresa.urlFoto }}
+											/>
+										)}
+									/>
+								</Card>
+							))
+						: empresas.map((empresa: Empresa, key: number) => (
+								<Card
+									key={key}
+									style={{
+										...styles.card,
+										borderColor: theme.colors.secondary,
+									}}
+									onPress={() => irParaTelaEmpresa(empresa)}
+								>
+									<Card.Title
+										title={empresa.nome}
+										subtitle={empresa.tecnologias}
+										left={() => (
+											<Avatar.Image
+												size={40}
+												source={{ uri: empresa.urlFoto }}
+											/>
+										)}
+									/>
+								</Card>
+							))}
 				</ScrollView>
 			</List.Section>
 		</View>
