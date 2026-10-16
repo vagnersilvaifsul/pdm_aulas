@@ -1,8 +1,16 @@
 import { EmpresaContext } from "@/context/EmpresaProvider";
 import { Empresa } from "@/model/Empresa";
+import { router } from "expo-router";
 import { useContext, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Avatar, Card, List, Searchbar, useTheme } from "react-native-paper";
+import {
+	Avatar,
+	Card,
+	FAB,
+	List,
+	Searchbar,
+	useTheme,
+} from "react-native-paper";
 
 export default function Empresas() {
 	const { empresas, getEmpresasByName } = useContext<any>(EmpresaContext);
@@ -11,7 +19,11 @@ export default function Empresas() {
 	const theme = useTheme();
 
 	function irParaTelaEmpresa(empresa: any) {
-		alert(`Empresa selecionada: ${empresa.nome}`);
+		router.push({
+			pathname: "/empresa",
+			params: { empresa: JSON.stringify(empresa) },
+		});
+		clearSearch();
 	}
 
 	async function SearchQuery(): Promise<void> {
@@ -90,6 +102,11 @@ export default function Empresas() {
 							))}
 				</ScrollView>
 			</List.Section>
+			<FAB
+				icon="plus"
+				style={styles.fab}
+				onPress={() => irParaTelaEmpresa(null)}
+			/>
 		</View>
 	);
 }
