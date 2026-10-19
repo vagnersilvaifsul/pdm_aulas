@@ -98,6 +98,11 @@ export default function SignUpScreen() {
 	}
 
 	async function tirarFoto() {
+		const { granted } = await ImagePicker.requestCameraPermissionsAsync();
+		if (!granted) {
+			alert("Permissão de câmera negada.");
+			return;
+		}
 		const result = await ImagePicker.launchCameraAsync({
 			mediaTypes: ["images"],
 			allowsEditing: true,
