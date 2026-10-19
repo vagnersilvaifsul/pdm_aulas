@@ -6,11 +6,8 @@ export default function RootLayout() {
 	return (
 		<PaperProvider>
 			<AuthProvider>
-				<Stack
-					initialRouteName="preload"
-					screenOptions={{ headerShown: false }}
-				>
-					<Stack.Screen name="preload" />
+				<Stack initialRouteName="index" screenOptions={{ headerShown: false }}>
+					<Stack.Screen name="index" />
 					<Stack.Screen name="entrar" />
 					<Stack.Screen name="cadastrar" />
 					<Stack.Screen name="(tabs)" />
