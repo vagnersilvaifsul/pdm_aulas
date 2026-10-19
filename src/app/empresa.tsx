@@ -28,7 +28,7 @@ const schema = yup.object().shape({
 	cep: yup
 		.string()
 		.required(requiredMessage)
-		.min(8, "O CEP deve ter exatamente 8 números")
+		.length(8, "O CEP deve ter exatamente 8 números")
 		.matches(/^[0-9]+$/, "O CEP deve conter apenas números"),
 	endereco: yup
 		.string()
