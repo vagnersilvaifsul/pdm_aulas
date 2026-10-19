@@ -118,7 +118,7 @@ export default function EmpresaDetalhe() {
 		if (msg === "ok") {
 			setDialogErroVisivel(true);
 			setRequisitando(false);
-			setAtualizando(false);
+			setExcluindo(false);
 			setMensagem({
 				tipo: "ok",
 				mensagem: "A empresa foi excluída com sucesso.",
