@@ -61,9 +61,9 @@ export default function Empresas() {
 				/>
 				<ScrollView>
 					{empresasSearch.length > 0
-						? empresasSearch.map((empresa: Empresa, key: number) => (
+						? empresasSearch.map((empresa: Empresa) => (
 								<Card
-									key={key}
+									key={empresa.uid}
 									style={{
 										...styles.card,
 										borderColor: theme.colors.secondary,
@@ -82,9 +82,9 @@ export default function Empresas() {
 									/>
 								</Card>
 							))
-						: empresas.map((empresa: Empresa, key: number) => (
+						: empresas.map((empresa: Empresa) => (
 								<Card
-									key={key}
+									key={empresa.uid}
 									style={{
 										...styles.card,
 										borderColor: theme.colors.secondary,
