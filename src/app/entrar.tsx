@@ -65,7 +65,9 @@ export default function Entrar() {
 	const [logando, setLogando] = useState(false);
 
 	async function entrar(data: Credencial): Promise<void> {
+		setLogando(true);
 		const result = await signIn(data);
+		setLogando(false);
 		if (result === "ok") {
 			router.replace("/(tabs)/home");
 		} else {
