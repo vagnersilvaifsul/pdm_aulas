@@ -30,6 +30,8 @@ export default function Empresas() {
 		const result = await getEmpresasByName(searchQuery);
 		if (result.length > 0) {
 			setEmpresasSearch(result);
+		} else {
+			setEmpresasSearch([]);
 		}
 	}
 
