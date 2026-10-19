@@ -162,7 +162,7 @@ export default function SignUpScreen() {
 						)}
 						name="nome"
 					/>
-					{errors.email && (
+					{errors.nome && (
 						<Text style={{ ...styles.textError, color: theme.colors.error }}>
 							{errors.nome?.message?.toString()}
 						</Text>
