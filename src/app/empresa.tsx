@@ -199,7 +199,7 @@ export default function EmpresaDetalhe() {
 						render={({ field: { onChange, onBlur, value } }) => (
 							<TextInput
 								style={styles.textinput}
-								label="Teconologias"
+								label="Tecnologias"
 								placeholder="react, react native, expo"
 								mode="outlined"
 								autoCapitalize="words"
