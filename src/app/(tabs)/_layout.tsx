@@ -23,11 +23,13 @@ export default function TabsLayout() {
 				name="home"
 				options={{
 					title: "Estudantes",
-					tabBarIcon: ({ color }) => (
+					tabBarIcon: ({ focused }) => (
 						<Icon
 							source="account-group"
-							color={theme.colors.primary}
 							size={20}
+							color={
+								focused ? theme.colors.primary : theme.colors.onSurfaceVariant
+							}
 						/>
 					),
 				}}
@@ -36,11 +38,13 @@ export default function TabsLayout() {
 				name="empresas"
 				options={{
 					title: "Empresas",
-					tabBarIcon: ({ color }) => (
+					tabBarIcon: ({ focused }) => (
 						<Icon
 							source="office-building-outline"
-							color={theme.colors.primary}
 							size={20}
+							color={
+								focused ? theme.colors.primary : theme.colors.onSurfaceVariant
+							}
 						/>
 					),
 				}}
@@ -49,8 +53,14 @@ export default function TabsLayout() {
 				name="menu"
 				options={{
 					title: "Menu",
-					tabBarIcon: ({ color }) => (
-						<Icon source="menu" color={theme.colors.primary} size={20} />
+					tabBarIcon: ({ focused }) => (
+						<Icon
+							source="menu"
+							size={20}
+							color={
+								focused ? theme.colors.primary : theme.colors.onSurfaceVariant
+							}
+						/>
 					),
 				}}
 			/>
