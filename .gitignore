@@ -35,6 +35,12 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+.env.*
+
+# credenciais (Firebase / assinatura Android)
+google-services.json
+*.keystore
 
 # typescript
 *.tsbuildinfo
