@@ -294,8 +294,7 @@ export default function EmpresaDetalhe() {
 			<Dialog
 				visible={dialogExcluirVisivel}
 				onDismiss={() => {
-					setDialogErroVisivel(false);
-					router.back();
+					setDialogExcluirVisivel(false);
 				}}
 			>
 				<Dialog.Icon icon={"alert-circle-outline"} size={60} />
