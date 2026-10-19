@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }: any) => {
 			const storageReference = ref(storage, `imagens/usuarios/${uid}/foto.png`);
 
 			//3. Envia para o storage
-			await uploadBytes(storageReference, blob);
+			await uploadBytes(storageReference, blob, { contentType: "image/png" });
 
 			//4. Retorna a URL da imagem
 			const url = await getDownloadURL(
