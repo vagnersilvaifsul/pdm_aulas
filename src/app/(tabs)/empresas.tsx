@@ -56,6 +56,7 @@ export default function Empresas() {
 					onChangeText={(query) => setSearchQuery(query)}
 					onSubmitEditing={SearchQuery}
 					onClearIconPress={clearSearch}
+					autoCapitalize="none"
 					value={searchQuery}
 				/>
 				<ScrollView>
