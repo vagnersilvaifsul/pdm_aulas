@@ -22,12 +22,29 @@ export default function TabsLayout() {
 			<Tabs.Screen
 				name="home"
 				options={{
-					title: "Home",
-					tabBarIcon: ({ color }) => (
+					title: "Estudantes",
+					tabBarIcon: ({ focused }) => (
 						<Icon
 							source="account-group"
-							color={theme.colors.primary}
 							size={20}
+							color={
+								focused ? theme.colors.primary : theme.colors.onSurfaceVariant
+							}
+						/>
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="empresas"
+				options={{
+					title: "Empresas",
+					tabBarIcon: ({ focused }) => (
+						<Icon
+							source="office-building-outline"
+							size={20}
+							color={
+								focused ? theme.colors.primary : theme.colors.onSurfaceVariant
+							}
 						/>
 					),
 				}}
@@ -36,8 +53,14 @@ export default function TabsLayout() {
 				name="menu"
 				options={{
 					title: "Menu",
-					tabBarIcon: ({ color }) => (
-						<Icon source="menu" color={theme.colors.primary} size={20} />
+					tabBarIcon: ({ focused }) => (
+						<Icon
+							source="menu"
+							size={20}
+							color={
+								focused ? theme.colors.primary : theme.colors.onSurfaceVariant
+							}
+						/>
 					),
 				}}
 			/>
