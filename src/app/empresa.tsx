@@ -1,5 +1,6 @@
 import { EmpresaContext } from "@/context/EmpresaProvider";
 import { Empresa } from "@/model/Empresa";
+import { buscarCep } from "@/servicos/apis_localizacao";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { router, useLocalSearchParams } from "expo-router";
 import { useContext, useState } from "react";
@@ -51,6 +52,7 @@ export default function EmpresaDetalhe() {
 		control,
 		handleSubmit,
 		formState: { errors },
+		setValue,
 	} = useForm<any>({
 		defaultValues: {
 			nome: JSON.parse(empresa.toString())?.nome,
@@ -70,8 +72,28 @@ export default function EmpresaDetalhe() {
 		alert("Função de tirar foto ainda não implementada");
 	}
 
-	function buscaEndereco(value: any): void {
-		alert("Função de busca de endereço ainda não implementada");
+	async function buscaEndereco(cep: string): Promise<void> {
+		if (cep.length < 8 && !/^[0-9]{8}$/.test(cep)) {
+			//regex para validar se o CEP tem 8 dígitos e eles estão entre 0 e 9
+			return;
+		}
+		const data = await buscarCep(cep);
+		if (data) {
+			setValue(
+				"endereco",
+				JSON.parse(data).logradouro +
+					" " +
+					JSON.parse(data).localidade +
+					" - " +
+					JSON.parse(data).uf,
+			);
+		} else {
+			setMensagem({
+				tipo: "erro",
+				mensagem: "Ops! Confira o CEP que você digitou.",
+			});
+			setDialogErroVisivel(true);
+		}
 	}
 
 	async function salvar(value: Empresa): Promise<void> {
