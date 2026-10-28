@@ -37,10 +37,12 @@ yarn-error.*
 .env*.local
 .env
 .env.*
+!.env.example
 
 # credenciais (Firebase / assinatura Android)
 google-services.json
 *.keystore
+credentials.json
 
 # typescript
 *.tsbuildinfo
