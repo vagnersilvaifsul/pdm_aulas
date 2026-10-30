@@ -20,6 +20,8 @@ const config: ExpoConfig = {
     },
     predictiveBackGestureEnabled: false,
     package: "com.vagnersilva.pdm_aulas",
+    googleServicesFile:
+			process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
   },
   web: {
     output: "static",
