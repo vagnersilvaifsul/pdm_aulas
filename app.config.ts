@@ -38,6 +38,24 @@ const config: ExpoConfig = {
       },
     ],
     "expo-secure-store",
+    [
+			"expo-image-picker",
+			{
+				cameraPermission:
+					"Permita que o uso da câmera para tirar a foto.",
+				microphonePermission: false,
+			},
+		],
+	[
+			"expo-notifications",
+			{
+				// Canal usado pelas mensagens do FCM que não indicam um canal
+				// (o mesmo criado pelo notificacaoService)
+				defaultChannel: "padrao",
+				// Cor do ícone na barra de notificações (verde do tema)
+				color: "#2F7D32",
+			},
+		],
   ],
   experiments: {
     typedRoutes: true,
