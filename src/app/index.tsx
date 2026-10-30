@@ -59,11 +59,9 @@ export default function Preload() {
 	async function registerForPushNotificationsAsync(): Promise<void> {
 		if (Platform.OS === "android") {
 			//Configura o canal de notificação para Android
-			Notifications.setNotificationChannelAsync("default", {
+			await Notifications.setNotificationChannelAsync("padrao", {
 				name: "padrao",
-				importance: Notifications.AndroidImportance.MAX,
-				vibrationPattern: [0, 250, 250, 250],
-				lightColor: theme.colors.error,
+				importance: Notifications.AndroidImportance.HIGH, // som e banner
 			});
 		}
 
