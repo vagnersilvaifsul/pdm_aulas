@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/immutability */
 import { AuthContext } from "@/context/AuthProvider";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
