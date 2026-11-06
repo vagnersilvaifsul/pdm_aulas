@@ -20,7 +20,6 @@ export const FcmProvider = ({ children }: any) => {
 
 	useEffect(() => {
 		if (userAuth) {
-			console.log("User authenticated, registering FCM token...");
 			cadastrarTokenDispositivoNoFirestore(userAuth.user.uid);
 		}
 	}, [userAuth]);
