@@ -1,5 +1,6 @@
 import { AuthProvider } from "@/context/AuthProvider";
 import { EmpresaProvider } from "@/context/EmpresaProvider";
+import { FcmProvider } from "@/context/FcmProvider";
 import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
@@ -31,15 +32,20 @@ export default function RootLayout() {
 	return (
 		<PaperProvider theme={colorScheme === "dark" ? themeDark : themeLight}>
 			<AuthProvider>
-				<EmpresaProvider>
-					<Stack initialRouteName="index" screenOptions={{ headerShown: false }}>
-						<Stack.Screen name="index" />
-						<Stack.Screen name="entrar" />
-						<Stack.Screen name="cadastrar" />
-						<Stack.Screen name="(tabs)" />
-						<Stack.Screen name="empresa" />
-					</Stack>
-				</EmpresaProvider>
+				<FcmProvider>
+					<EmpresaProvider>
+						<Stack
+							initialRouteName="index"
+							screenOptions={{ headerShown: false }}
+						>
+							<Stack.Screen name="index" />
+							<Stack.Screen name="entrar" />
+							<Stack.Screen name="cadastrar" />
+							<Stack.Screen name="(tabs)" />
+							<Stack.Screen name="empresa" />
+						</Stack>
+					</EmpresaProvider>
+				</FcmProvider>
 			</AuthProvider>
 		</PaperProvider>
 	);

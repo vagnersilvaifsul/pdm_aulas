@@ -7,14 +7,17 @@ import {
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
 	signInWithEmailAndPassword,
+	signOut,
+	UserCredential,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { deleteField, doc, setDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }: any) => {
+	const [userAuth, setUserAuth] = useState<UserCredential | null>(null);
 	useEffect(() => {
 		//signIn("teste@email.com", "Teste123");
 		// signUp({
@@ -86,6 +89,7 @@ export const AuthProvider = ({ children }: any) => {
 			if (!userAuth.user.emailVerified) {
 				return "Email não verificado. Verifique sua caixa de entrada no serviço de email.";
 			}
+			setUserAuth(userAuth);
 			//cachear a Credencial do usuário no localStorage (ou SecureStore)
 			await SecureStore.setItemAsync("credencial", JSON.stringify(credencial));
 			return "ok";
@@ -131,6 +135,35 @@ export const AuthProvider = ({ children }: any) => {
 		}
 	}
 
+	async function sair(): Promise<string> {
+		try {
+			await SecureStore.deleteItemAsync("credencial");
+			await apagaTokenDispositivoNoFirestore();
+			await signOut(auth);
+			setUserAuth(null);
+			return "ok";
+		} catch (error: any) {
+			console.error(error.code, error.message);
+			return launchServerMessageErro(error);
+		}
+	}
+
+	//Remove o token deste aparelho do usuário, para que ele pare de receber
+	//notificações depois de sair. Precisa rodar antes do signOut, pois as
+	//regras do Firestore só deixam o próprio usuário alterar o seu documento.
+	async function apagaTokenDispositivoNoFirestore(): Promise<void> {
+		try {
+			if (auth.currentUser) {
+				await updateDoc(doc(db, "usuarios", auth.currentUser.uid), {
+					token_fcm: deleteField(),
+				});
+			}
+		} catch (e) {
+			//não impede o logout se não conseguir apagar o token
+			console.error("AuthProvider, apagaTokenDispositivoNoFirestore: " + e);
+		}
+	}
+
 	//função utilitária
 	function launchServerMessageErro(e: any): string {
 		switch (e.code) {
@@ -153,7 +186,7 @@ export const AuthProvider = ({ children }: any) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ signIn, recuperarCredencialdaCache, signUp }}
+			value={{ signIn, recuperarCredencialdaCache, signUp, sair }}
 		>
 			{children}
 		</AuthContext.Provider>
