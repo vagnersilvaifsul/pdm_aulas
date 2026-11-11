@@ -1,22 +1,81 @@
 rules_version = '2';
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
+// Regras de segurança do Cloud Storage do pdm-exemplo-expo.
+//
+// Caminhos usados pelo app:
+//   imagens/usuarios/{uid}/foto.png        -> AuthProvider.sendImageToStorage
+//                                             (chamado no signUp)
+//   imagens/empresas/{empresaId}/foto.png  -> reservado para empresa.tsx
+//                                             (buscaNaGaleria/tiraFoto ainda
+//                                             não implementados)
+//
+// Lembretes:
+// - As URLs geradas por getDownloadURL() carregam um token e NÃO passam por
+//   estas regras. Por isso o <Image source={{ uri: urlFoto }}> continua
+//   funcionando para qualquer pessoa que tenha a URL salva no Firestore.
+//   As regras de "read" abaixo controlam apenas o acesso pelo SDK
+//   (getDownloadURL, getBytes, getMetadata, list...).
+// - As Cloud Functions usam o Admin SDK e NÃO passam por estas regras.
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // This rule allows anyone with your Storage bucket reference to view, edit,
-    // and delete all data in your Storage bucket. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Storage bucket will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Storage bucket will be denied until you Update
-    // your rules
-    match /{allPaths=**} {
-      allow read, write: if request.time < timestamp.date(2026, 12, 31);
+    // ---------------------------------------------------------------------
+    // Funções utilitárias
+    // ---------------------------------------------------------------------
+
+    function isSignedIn() {
+      return request.auth != null;
     }
+
+    // O app só deixa entrar quem verificou o email (AuthProvider.signIn)
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Imagem dentro do limite de tamanho (em bytes)
+    function isImagemValida(maxBytes) {
+      return request.resource.size > 0
+        && request.resource.size <= maxBytes
+        && request.resource.contentType.matches('image/(png|jpeg)');
+    }
+
+    // ---------------------------------------------------------------------
+    // imagens/usuarios/{uid}/foto.png
+    // ---------------------------------------------------------------------
+    // O AuthProvider redimensiona a foto para 150x150 e envia como PNG
+    // (contentType "image/png"). Uma imagem assim fica bem abaixo de 100 KB;
+    // o limite de 1 MB dá folga e impede abuso do bucket.
+    match /imagens/usuarios/{uid}/foto.png {
+      // getDownloadURL() no signUp precisa de permissão de leitura
+      allow read: if isOwner(uid);
+
+      // O upload acontece logo após o createUserWithEmailAndPassword, ANTES
+      // da verificação do email. Por isso aqui basta ser o dono.
+      allow create, update: if isOwner(uid)
+        && isImagemValida(1 * 1024 * 1024)
+        && request.resource.contentType == 'image/png';
+
+      allow delete: if isOwner(uid);
+    }
+
+    // ---------------------------------------------------------------------
+    // imagens/empresas/{empresaId}/foto.png
+    // ---------------------------------------------------------------------
+    // Segue as mesmas regras da coleção empresas no Firestore: leitura
+    // pública, escrita por usuários logados com email verificado.
+    match /imagens/empresas/{empresaId}/foto.png {
+      allow read: if true;
+
+      allow create, update: if isVerified()
+        && isImagemValida(2 * 1024 * 1024);
+
+      allow delete: if isVerified();
+    }
+
+    // Todo o resto fica bloqueado (sem regra = acesso negado)
   }
 }

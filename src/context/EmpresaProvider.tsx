@@ -13,58 +13,62 @@ import {
 	setDoc,
 	startAt,
 } from "firebase/firestore";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { AuthContext } from "./AuthProvider";
 
 export const EmpresaContext = createContext({});
 
 export const EmpresaProvider = ({ children }: any) => {
 	const [empresas, setEmpresas] = useState<Empresa[]>([]);
+	const { userAuth } = useContext<any>(AuthContext);
 	useEffect(() => {
-		//select (ou get)
-		const q = query(collection(db, "empresas"), orderBy("nome"));
-		const unsubscribe = onSnapshot(q, (querySnapshot) => {
-			if (querySnapshot) {
-				let data: Empresa[] = [];
-				querySnapshot.forEach((doc) => {
-					data.push({
-						uid: doc.id,
-						nome: doc.data().nome,
-						tecnologias: doc.data().tecnologias,
-						cep: doc.data().cep,
-						endereco: doc.data().endereco,
-						latitude: doc.data().latitude,
-						longitude: doc.data().longitude,
-						urlFoto: doc.data().urlFoto,
+		if (userAuth) {
+			//select (ou get)
+			const q = query(collection(db, "empresas"), orderBy("nome"));
+			const unsubscribe = onSnapshot(q, (querySnapshot) => {
+				if (querySnapshot) {
+					let data: Empresa[] = [];
+					querySnapshot.forEach((doc) => {
+						data.push({
+							uid: doc.id,
+							nome: doc.data().nome,
+							tecnologias: doc.data().tecnologias,
+							cep: doc.data().cep,
+							endereco: doc.data().endereco,
+							latitude: doc.data().latitude,
+							longitude: doc.data().longitude,
+							urlFoto: doc.data().urlFoto,
+						});
 					});
-				});
-				setEmpresas(data);
-			}
-		});
-		// let empresa: Empresa = {
-		// 	nome: "teste2",
-		// 	tecnologias: "react, react-native",
-		// 	endereco: "Rua Teste2",
-		// 	latitude: -31.766453286495448,
-		// 	longitude: -52.351914793252945,
-		// 	urlFoto:
-		// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-		// } as Empresa;
-		// save(empresa);
+					setEmpresas(data);
+				}
+			});
+			// let empresa: Empresa = {
+			// 	nome: "teste2",
+			// 	tecnologias: "react, react-native",
+			// 	endereco: "Rua Teste2",
+			// 	latitude: -31.766453286495448,
+			// 	longitude: -52.351914793252945,
+			// 	urlFoto:
+			// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+			// } as Empresa;
+			// save(empresa);
 
-		// let empresa: Empresa = {
-		// 	uid: "5WCirUvAD9iGykXFFQQS",
-		// 	nome: "teste2",
-		// 	tecnologias: "react, react-native",
-		// 	endereco: "Rua Teste2",
-		// 	latitude: -31.766453286495448,
-		// 	longitude: -52.351914793252945,
-		// 	urlFoto:
-		// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-		// } as Empresa;
-		// save(empresa);
-		// del("5WCirUvAD9iGykXFFQQS");
-		return () => unsubscribe();
-	}, []);
+			// let empresa: Empresa = {
+			// 	uid: "5WCirUvAD9iGykXFFQQS",
+			// 	nome: "teste2",
+			// 	tecnologias: "react, react-native",
+			// 	endereco: "Rua Teste2",
+			// 	latitude: -31.766453286495448,
+			// 	longitude: -52.351914793252945,
+			// 	urlFoto:
+			// 		"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+			// } as Empresa;
+			// save(empresa);
+			// del("5WCirUvAD9iGykXFFQQS");
+			return () => unsubscribe();
+		}
+	}, [userAuth]);
 
 	//save (insert ou update)
 	async function save(empresa: Empresa): Promise<string> {
