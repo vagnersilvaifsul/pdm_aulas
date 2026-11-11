@@ -1,10 +1,128 @@
 rules_version = '2';
 
+// Regras de segurança do Firestore do pdm-exemplo-expo.
+//
+// Coleções usadas pelo app:
+//   usuarios/{uid}      -> AuthProvider.tsx (signUp, sair) e FcmProvider.tsx
+//   empresas/{empresaId} -> EmpresaProvider.tsx
+//
+// Lembrete: as Cloud Functions (functions/src/index.ts) usam o Admin SDK e
+// NÃO passam por estas regras.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2026, 12, 31);
+
+    // ---------------------------------------------------------------------
+    // Funções utilitárias
+    // ---------------------------------------------------------------------
+
+    function isSignedIn() {
+      return request.auth != null;
     }
+
+    // O app só deixa entrar quem verificou o email (AuthProvider.signIn)
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function novo() {
+      return request.resource.data;
+    }
+
+    // Campos que mudaram (incluídos, alterados ou removidos) num update
+    function camposAlterados() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    function isTextoValido(valor, max) {
+      return valor is string && valor.size() > 0 && valor.size() <= max;
+    }
+
+    // ---------------------------------------------------------------------
+    // usuarios/{uid}
+    // ---------------------------------------------------------------------
+
+    function isUsuarioValido(dados) {
+      return dados.keys().hasOnly(
+               ['email', 'nome', 'urlFoto', 'curso', 'perfil', 'token_fcm'])
+        && (!('email' in dados) ||
+              (dados.email is string
+               && dados.email.lower() == request.auth.token.email.lower()))
+        && (!('nome' in dados) || isTextoValido(dados.nome, 100))
+        && (!('urlFoto' in dados) || (dados.urlFoto is string && dados.urlFoto.size() <= 2048))
+        && (!('curso' in dados) || dados.curso in ['CSTSI', 'CSBD'])
+        && (!('perfil' in dados) || dados.perfil in ['Aluno', 'Professor', 'Empresa'])
+        && (!('token_fcm' in dados) || isTextoValido(dados.token_fcm, 4096));
+    }
+
+    match /usuarios/{uid} {
+      // Cada usuário lê o próprio documento
+      allow get: if isOwner(uid);
+
+      // ATENÇÃO: o FcmProvider faz a consulta
+      //   where("token_fcm", "==", <token do aparelho>)
+      // em toda a coleção. As regras não conseguem exigir esse filtro, então
+      // liberar o "list" deixa qualquer usuário logado listar todos os
+      // usuários (nome, email e token). Veja a recomendação no final.
+      allow list: if isVerified();
+
+      // Cadastro (AuthProvider.signUp): só no próprio uid, e o usuário não
+      // pode se dar um perfil privilegiado. O app sempre cadastra como
+      // 'Aluno' (cadastrar.tsx). O email ainda não foi verificado neste momento.
+      allow create: if isOwner(uid)
+        && isUsuarioValido(novo())
+        && (!('perfil' in novo()) || novo().perfil == 'Aluno');
+
+      // O próprio usuário atualiza os seus dados (ex.: token_fcm), mas não
+      // muda o perfil nem o email (o email é do Firebase Auth).
+      allow update: if isOwner(uid)
+        && isUsuarioValido(novo())
+        && !camposAlterados().hasAny(['perfil', 'email']);
+
+      // FcmProvider: ao entrar num aparelho que já foi usado por outra conta,
+      // o app remove o token_fcm da outra conta. Outro usuário só pode fazer
+      // isso: REMOVER o campo token_fcm, sem tocar em mais nada.
+      allow update: if isVerified()
+        && !isOwner(uid)
+        && camposAlterados().hasOnly(['token_fcm'])
+        && !('token_fcm' in novo());
+
+      // O app não apaga usuários
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------------
+    // empresas/{empresaId}
+    // ---------------------------------------------------------------------
+
+    function isEmpresaValida(dados) {
+      return dados.keys().hasOnly(
+               ['nome', 'tecnologias', 'cep', 'endereco', 'latitude', 'longitude', 'urlFoto'])
+        && isTextoValido(dados.nome, 100)
+        && (!('tecnologias' in dados) || (dados.tecnologias is string && dados.tecnologias.size() <= 500))
+        && (!('cep' in dados) || (dados.cep is string && dados.cep.matches('^[0-9]{8}$|^[0-9]{5}-[0-9]{3}$|^$')))
+        && (!('endereco' in dados) || (dados.endereco is string && dados.endereco.size() <= 300))
+        && (!('latitude' in dados) ||
+              (dados.latitude is number && dados.latitude >= -90 && dados.latitude <= 90))
+        && (!('longitude' in dados) ||
+              (dados.longitude is number && dados.longitude >= -180 && dados.longitude <= 180))
+        && (!('urlFoto' in dados) || (dados.urlFoto is string && dados.urlFoto.size() <= 2048));
+    }
+
+    match /empresas/{empresaId} {
+      // Leitura pública: o EmpresaProvider abre o onSnapshot na raiz do app
+      // (app/_layout.tsx), antes do login. Se exigir login aqui, a lista
+      // falha e não é recarregada depois que o usuário entra.
+      allow read: if true;
+
+      // Cadastrar, editar e excluir: só usuários logados com email verificado
+      allow create, update: if isVerified() && isEmpresaValida(novo());
+      allow delete: if isVerified();
+    }
+
+    // Todo o resto fica bloqueado
   }
 }
