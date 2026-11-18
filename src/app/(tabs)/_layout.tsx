@@ -50,6 +50,21 @@ export default function TabsLayout() {
 				}}
 			/>
 			<Tabs.Screen
+				name="empresas_map"
+				options={{
+					title: "Mapa Empresas",
+					tabBarIcon: ({ focused }) => (
+						<Icon
+							source="map"
+							size={20}
+							color={
+								focused ? theme.colors.primary : theme.colors.onSurfaceVariant
+							}
+						/>
+					),
+				}}
+			/>
+			<Tabs.Screen
 				name="menu"
 				options={{
 					title: "Menu",
