@@ -9,8 +9,10 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getMessaging } from "firebase-admin/messaging";
 import { setGlobalOptions } from "firebase-functions";
 import * as logger from "firebase-functions/logger";
+import { defineSecret } from "firebase-functions/params";
 import {
-  onDocumentCreatedWithAuthContext,
+	onDocumentCreatedWithAuthContext,
+	onDocumentWritten,
 } from "firebase-functions/v2/firestore";
 
 initializeApp();
@@ -93,5 +95,84 @@ export const notificarNovaEmpresa = onDocumentCreatedWithAuthContext(
 			`Notificação enviada: ${sucessos} sucesso(s), ${falhas} falha(s).`,
 		);
 		await lote.commit();
+	},
+);
+
+// Chave da Address Validation API do Google, guardada no SECRET MANAGER
+// (firebase functions:secrets:set ADDRESS_VALIDATION_API_KEY): nunca
+// fica no código, no repositório nem no app — só esta Function a lê.
+const chaveEnderecos = defineSecret("ADDRESS_VALIDATION_API_KEY");
+
+// Resposta da Address Validation API (só os campos usados)
+type RespostaValidacao = {
+	result?: {
+		geocode?: { location?: { latitude: number; longitude: number } };
+	};
+};
+
+// GATILHO: a cada empresa criada ou alterada, calcula as coordenadas
+// REAIS pelo CEP e pelo endereço, em SEGUNDO PLANO — o app salva e segue;
+// o mapa e a lista (onSnapshot) mostram a posição nova quando ela chega.
+export const geocodificarEmpresa = onDocumentWritten(
+	{ document: "empresas/{empresaId}", secrets: [chaveEnderecos] },
+	async (evento) => {
+		const depois = evento.data?.after;
+		const empresa = depois?.data();
+		if (!depois || !empresa) return; // empresa apagada
+
+		// Só age se o CEP ou o endereço mudaram. Isso também evita um LAÇO
+		// INFINITO: a própria Function altera a empresa (latitude e
+		// longitude), o que dispara o gatilho de novo — e aí nada mudou.
+		const antes = evento.data?.before.data();
+		if (antes?.cep === empresa.cep && antes?.endereco === empresa.endereco) {
+			return;
+		}
+
+		// Falha de rede ou resposta que não é JSON: registra no log e mantém as
+		// coordenadas atuais, sem derrubar a Function
+		let dados: RespostaValidacao;
+		try {
+			const resposta = await fetch(
+				"https://addressvalidation.googleapis.com/v1:validateAddress",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						// A chave vai no cabeçalho (e não na URL, que aparece em logs)
+						"X-Goog-Api-Key": chaveEnderecos.value(),
+					},
+					body: JSON.stringify({
+						address: {
+							regionCode: "BR",
+							postalCode: empresa.cep,
+							addressLines: [empresa.endereco],
+						},
+					}),
+				},
+			);
+			if (!resposta.ok) {
+				logger.error(`Address Validation respondeu HTTP ${resposta.status}.`);
+				return; // mantém as coordenadas atuais
+			}
+
+			dados = (await resposta.json()) as RespostaValidacao;
+		} catch (erro) {
+			logger.error(
+				`Falha ao consultar a Address Validation (empresa ${evento.params.empresaId}).`,
+				erro,
+			);
+			return; // mantém as coordenadas atuais
+		}
+		const local = dados.result?.geocode?.location;
+		if (!local) {
+			logger.warn(`Sem coordenadas para a empresa ${evento.params.empresaId}.`);
+			return; // mantém as coordenadas atuais
+		}
+
+		await depois.ref.update({
+			latitude: local.latitude,
+			longitude: local.longitude,
+		});
+		logger.info(`Coordenadas atualizadas: empresa ${evento.params.empresaId}.`);
 	},
 );
