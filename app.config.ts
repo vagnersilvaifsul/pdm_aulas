@@ -22,6 +22,11 @@ const config: ExpoConfig = {
     package: "com.vagnersilva.pdm_aulas",
     googleServicesFile:
 			process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
+    config: {
+      googleMaps: {
+        apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      },
+    },
   },
   web: {
     output: "static",
